@@ -34,5 +34,34 @@ export const styles = StyleSheet.create({
     color: THEME.colors.base.gray_700,
     backgroundColor: THEME.colors.base.gray_200,
     paddingHorizontal: 8,
+    borderRadius: 4,
+  },
+  principalCoffes: {
+    width: width,
+    marginLeft: -32,
+    maxHeight: 280,
+    marginBottom: 14,
+    marginRight: 32,
+  },
+  principalCoffesContent: {
+    gap: 32,
+    paddingHorizontal: 32
+  },
+  filterTitle: {
+    fontFamily: THEME.font_family.baloo.bold,
+    fontSize: THEME.font_size.baloo.title_md,
+    color: THEME.colors.base.gray_300,
+    marginVertical: 12
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    gap: 8
+  },
+  coffeListTitle: {
+    fontFamily: THEME.font_family.baloo.bold,
+    fontSize: THEME.font_size.baloo.title_xs,
+    color: THEME.colors.base.gray_400,
+    marginTop: 24,
+    marginBottom: 12
   }
 });
