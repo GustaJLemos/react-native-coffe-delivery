@@ -8,8 +8,8 @@
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "cover",
+      "backgroundColor": "#4B2995"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -20,8 +20,9 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#4B2995"
+      },
+      "package": "com.gusta.coffedelivery"
     },
     "web": {
       "favicon": "./assets/favicon.png"
