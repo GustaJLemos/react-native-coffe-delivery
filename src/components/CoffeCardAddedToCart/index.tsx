@@ -5,10 +5,22 @@ import { styles } from './styles';
 import { CoffeQuantityCounter } from '../CoffeQuantityCounter';
 import { Trash } from 'phosphor-react-native';
 import { THEME } from '../../theme';
+import { CoffeAddedToCart } from '../../types/CoffeAddedToCart';
+import { useCartStore } from '../../store/cartStore';
 
-export function CoffeCardAddedToCart() {
-  // TODO trocar dps pela info vindo da context
-  const [coffeCounter, setCoffeCounter] = useState<number>(1);
+type Props = {
+  coffe: CoffeAddedToCart;
+}
+
+export function CoffeCardAddedToCart({ coffe }: Props) {
+  const updateCoffeQuantity = useCartStore((state) => state.updateCoffeQuantityById);
+
+  const [coffeCounter, setCoffeCounter] = useState<number>(coffe.quantity);
+
+  function handleUpdateCoffeQuantity(newCount) {
+    setCoffeCounter(newCount);
+    updateCoffeQuantity(coffe.id, newCount);
+  }
 
   return (
     <View style={styles.container}>
@@ -19,15 +31,15 @@ export function CoffeCardAddedToCart() {
 
       <View style={styles.infoContainer}>
         <Text style={styles.coffeName}>
-          Irlândes
+          {coffe.name}
         </Text>
         <Text style={styles.coffeSize}>
-          227ml
+          {coffe.size}
         </Text>
         <View style={styles.cardActionsContainer}>
           <CoffeQuantityCounter
             count={coffeCounter}
-            setCount={setCoffeCounter}
+            setCount={handleUpdateCoffeQuantity}
             style={styles.coffeCounterContainer}
           />
           <TouchableOpacity style={styles.trashIconContainer}>
@@ -37,7 +49,7 @@ export function CoffeCardAddedToCart() {
       </View>
 
       <Text style={styles.coffePrice}>
-        R$ 9,90
+        R$ {coffeCounter * 9.90}
       </Text>
     </View>
   );

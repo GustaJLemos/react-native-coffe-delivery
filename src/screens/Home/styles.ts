@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 32,
+    backgroundColor: THEME.colors.base.gray_900,
   },
   background: {
     width: width,

@@ -9,9 +9,21 @@ import { Filter } from '../../components/Filter';
 import { CoffeCard } from '../../components/CoffeCard';
 import { coffeFilterType, principalCoffes, specialtyCoffees, sweetCoffees, traditionalCoffees } from '../../mocks/coffes';
 import { CoffeType } from '../../types/CoffeType';
+import { useNavigation } from '@react-navigation/native';
+import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationProps';
+import { Coffes } from '../../types/Coffes';
+import { useCartStore } from '../../store/cartStore';
 
 export function Home() {
   const [filterSelected, setFilterSelected] = useState<CoffeType | null>(null);
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
+
+  const setCoffeSelected = useCartStore((state) => state.setCoffeSelected)
+
+  function handleNavigateToCoffeDetails(coffeSelected: Coffes) {
+    setCoffeSelected(coffeSelected);
+    navigation.navigate('CoffeDetailsScreen');
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -39,7 +51,11 @@ export function Home() {
         contentContainerStyle={styles.principalCoffesContent}
       >
         {principalCoffes.map((item) => (
-          <CoffePrincipalCard key={item.id} coffe={item} />
+          <CoffePrincipalCard
+            key={item.id}
+            coffe={item}
+            onPress={() => handleNavigateToCoffeDetails(item)}
+          />
         ))}
       </ScrollView>
 
@@ -59,6 +75,7 @@ export function Home() {
         ))}
       </View>
 
+      {/* TODO mudar pra uma listagem só sera? */}
       {/* listagem dos cafés tradicionais */}
       <Text style={styles.coffeListTitle}>
         tradicionais
@@ -68,7 +85,11 @@ export function Home() {
         contentContainerStyle={styles.coffeList}
       >
         {traditionalCoffees.map((item) => (
-          <CoffeCard key={item.id} coffe={item} />
+          <CoffeCard
+            key={item.id}
+            coffe={item}
+            onPress={() => handleNavigateToCoffeDetails(item)}
+          />
         ))}
       </ScrollView>
 
@@ -82,7 +103,11 @@ export function Home() {
         contentContainerStyle={styles.coffeList}
       >
         {sweetCoffees.map((item) => (
-          <CoffeCard key={item.id} coffe={item} />
+          <CoffeCard
+            key={item.id}
+            coffe={item}
+            onPress={() => handleNavigateToCoffeDetails(item)}
+          />
         ))}
       </ScrollView>
 
@@ -96,7 +121,11 @@ export function Home() {
         contentContainerStyle={styles.coffeList}
       >
         {specialtyCoffees.map((item) => (
-          <CoffeCard key={item.id} coffe={item} />
+          <CoffeCard
+            key={item.id}
+            coffe={item}
+            onPress={() => handleNavigateToCoffeDetails(item)}
+          />
         ))}
       </ScrollView>
     </ScrollView>
