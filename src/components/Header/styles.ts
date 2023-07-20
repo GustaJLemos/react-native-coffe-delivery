@@ -18,5 +18,10 @@ export const styles = StyleSheet.create({
     fontSize: THEME.font_size.roboto.text_sm,
     color: THEME.colors.base.gray_900,
     marginLeft: 4
+  },
+  title: {
+    fontFamily: THEME.font_family.baloo.bold,
+    fontSize: THEME.font_size.baloo.title_sm,
+    color: THEME.colors.base.gray_200,
   }
 });

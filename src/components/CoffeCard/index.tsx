@@ -1,23 +1,27 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import ExpressoSvg from '../../assets/coffes/Expresso.svg'
+import { View, Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
 import { styles } from './styles';
+import { Coffes } from '../../types/Coffes';
 
-export function CoffeCard() {
+type Props = TouchableOpacityProps & {
+  coffe: Coffes;
+}
+
+export function CoffeCard({ coffe: { name, description, price, image: Image } }: Props) {
   return (
     <View style={styles.container}>
-      <ExpressoSvg
+      <Image
         style={{ marginTop: -15 }}
       />
 
       <View style={styles.content}>
         <Text style={styles.title}>
-          Expresso Tradicional
+          {name}
         </Text>
 
         <Text style={styles.description} numberOfLines={2}>
-          O tradicional café feito com água quente e grãos moídos
+          {description}
         </Text>
 
         <View style={styles.priceContainer}>
@@ -25,7 +29,7 @@ export function CoffeCard() {
             R$
           </Text>
           <Text style={styles.priceValue}>
-            9,90
+            {price}
           </Text>
         </View>
       </View>

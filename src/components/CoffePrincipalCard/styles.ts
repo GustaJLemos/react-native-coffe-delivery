@@ -42,7 +42,7 @@ export const styles = StyleSheet.create({
     color: THEME.colors.base.gray_200,
     fontFamily: THEME.font_family.baloo.bold,
     fontSize: THEME.font_size.baloo.title_md,
-    marginTop: 14
+    marginTop: 14,
   },
   description: {
     color: THEME.colors.base.gray_400,
