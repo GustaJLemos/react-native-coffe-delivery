@@ -26,7 +26,7 @@ export function CoffeDetails() {
   {/* TODO tenho q fazer função pra passar esses parâmetros no meu zustand */ }
 
   function handleAddCoffeToCart() {
-    let alreadyAddedToTheList = cartStore.coffeAddedToCart.find((item) => item.id === coffeSelected.id)
+    let alreadyAddedToTheList = cartStore.coffeAddedToCart.find((item) => item.id === coffeSelected.id && item.size === coffeSizeSelected)
 
     if (alreadyAddedToTheList?.id) {
       console.log('cai aq porra')
@@ -101,6 +101,7 @@ export function CoffeDetails() {
             title='Adicionar'
             type='purple'
             onPress={handleAddCoffeToCart}
+            disabled={coffeSizeSelected === null}
           />
         </View>
       </View>

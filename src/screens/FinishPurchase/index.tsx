@@ -3,8 +3,16 @@ import { View, Text } from 'react-native';
 import IlustrationSvg from '../../assets/coffes/Illustration.svg'
 import { styles } from './styles';
 import { Button } from '../../components/Button';
+import { useNavigation } from '@react-navigation/native';
+import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationProps';
 
 export function FinishPurchase() {
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
+
+  function handleNavigateToHome() {
+    navigation.navigate('HomeScreen')
+  }
+
   return (
     <View style={styles.container}>
       <IlustrationSvg />
@@ -20,6 +28,7 @@ export function FinishPurchase() {
         <Button
           title='Ir para a home'
           type='purple'
+          onPress={handleNavigateToHome}
         />
       </View>
     </View>

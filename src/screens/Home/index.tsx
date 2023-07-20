@@ -35,6 +35,7 @@ export function Home() {
         Encontre o café perfeito para qualquer hora do dia
       </Text>
 
+      {/* TODO Fazer função de pesquisa aq */}
       <View style={styles.inputContainer}>
         <MagnifyingGlass size={16} color={THEME.colors.base.gray_400} />
         <TextInput

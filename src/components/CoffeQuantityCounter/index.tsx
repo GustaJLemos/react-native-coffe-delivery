@@ -35,7 +35,6 @@ export function CoffeQuantityCounter({ count, setCount, ...rest }: Props) {
       <TouchableOpacity
         hitSlop={16}
         onPress={() => setCount(count + 1)}
-
       >
         <Plus size={20} weight="bold" color={THEME.colors.product.purple} />
       </TouchableOpacity>
