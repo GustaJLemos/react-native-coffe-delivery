@@ -3,9 +3,8 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { useFonts as useFontsRoboto, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto';
 import { useFonts as useFontsBaloo, Baloo2_700Bold } from '@expo-google-fonts/baloo-2';
 import { THEME } from './src/theme';
-import { Home } from './src/screens/Home';
-import { CoffeDetails } from './src/screens/CoffeDetails';
-import { Cart } from './src/screens/Cart';
+
+import { AppRoutes } from './src/routes/AppRoutes.routes';
 
 export default function App() {
   const [fontRobotoLoaded] = useFontsRoboto({ Roboto_400Regular, Roboto_700Bold })
@@ -20,7 +19,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <StatusBar style='light' backgroundColor={THEME.colors.base.gray_100} />
-      <Cart />
+      <AppRoutes />
     </View>
   );
 }
