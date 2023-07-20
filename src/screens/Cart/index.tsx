@@ -13,7 +13,7 @@ import { useCartStore } from '../../store/cartStore';
 import { calculateItemPrices } from '../../utils/calculateItemPrices';
 
 export function Cart() {
-  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [totalPrice, setTotalPrice] = useState<string>('');
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
@@ -37,13 +37,20 @@ export function Cart() {
         title='Carrinho'
         showCart={false}
       />
+
+      {coffeAddedToCart.length === 0 && (
+        <Text style={styles.emptyListText}>
+          Nenhum item adicionado ao carrinho... Que tal adicionar algum?
+        </Text>
+      )}
+
       <ScrollView
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
       >
-        {coffeAddedToCart.map((item) => (
+        {coffeAddedToCart.map((item, index) => (
           <CoffeCardAddedToCart
-            key={item.id}
+            key={item.id + index}
             coffe={item}
           />
         ))}
@@ -52,22 +59,24 @@ export function Cart() {
       {/* <View style={styles.excludeContainer}>
         <Trash size={28} color={THEME.colors.feedback.red_dark} />
       </View> */}
-      <View style={styles.bottomContainer}>
-        <View style={styles.bottomText}>
-          <Text style={styles.finalValue}>
-            Valor total
-          </Text>
-          <Text style={styles.finalPrice}>
-            R$ {totalPrice ? totalPrice : '**.**'}
-          </Text>
-        </View>
+      {coffeAddedToCart.length > 0 && (
+        <View style={styles.bottomContainer}>
+          <View style={styles.bottomText}>
+            <Text style={styles.finalValue}>
+              Valor total
+            </Text>
+            <Text style={styles.finalPrice}>
+              R$ {totalPrice ? totalPrice : '**.**'}
+            </Text>
+          </View>
 
-        <Button
-          title='Confirmar pedido'
-          type='yellow'
-          onPress={handleNavigateToFinishPurchase}
-        />
-      </View>
+          <Button
+            title='Confirmar pedido'
+            type='yellow'
+            onPress={handleNavigateToFinishPurchase}
+          />
+        </View>
+      )}
     </View>
   );
 } 

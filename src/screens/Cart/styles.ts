@@ -53,5 +53,13 @@ export const styles = StyleSheet.create({
     color: THEME.colors.base.gray_200,
     fontFamily: THEME.font_family.baloo.bold,
     fontSize: THEME.font_size.baloo.title_md,
+  },
+  emptyListText: {
+    color: THEME.colors.base.gray_400,
+    fontFamily: THEME.font_family.baloo.bold,
+    fontSize: THEME.font_size.baloo.title_xs,
+    textAlign: 'center',
+    paddingHorizontal: 32,
+    marginTop: 36
   }
 });
