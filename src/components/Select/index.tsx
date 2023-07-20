@@ -3,11 +3,12 @@ import { View, Text, TouchableOpacity } from 'react-native';
 
 import { styles } from './styles';
 import { THEME } from '../../theme';
+import { CoffeSize } from '../../types/CoffeSize';
 
 type Props = {
-  text: string,
+  text: CoffeSize,
   selected: boolean,
-  onSelect: (selectedSize: string) => void;
+  onSelect: (selectedSize: CoffeSize) => void;
 }
 
 export function Select({ text, selected, onSelect }: Props) {
