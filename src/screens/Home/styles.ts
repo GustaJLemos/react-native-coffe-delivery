@@ -5,12 +5,12 @@ const { width } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 32,
   },
   background: {
     width: width,
-    height: '50%',
+    height: '15%',
     backgroundColor: THEME.colors.base.gray_100,
     position: 'absolute'
   },
@@ -61,7 +61,11 @@ export const styles = StyleSheet.create({
     fontFamily: THEME.font_family.baloo.bold,
     fontSize: THEME.font_size.baloo.title_xs,
     color: THEME.colors.base.gray_400,
-    marginTop: 24,
+    marginTop: 36,
     marginBottom: 12
+  },
+  coffeList: {
+    flex: 1,
+    gap: 12
   }
 });

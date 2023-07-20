@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, TextInput, View, ScrollView } from 'react-native';
 import { MagnifyingGlass } from 'phosphor-react-native';
 import { styles } from './styles';
@@ -7,10 +7,12 @@ import { THEME } from '../../theme';
 import { CoffePrincipalCard } from '../../components/CoffePrincipalCard';
 import { Filter } from '../../components/Filter';
 import { CoffeCard } from '../../components/CoffeCard';
-
-const fazermockdps = [1, 2, 3]
+import { coffeFilterType, principalCoffes, specialtyCoffees, sweetCoffees, traditionalCoffees } from '../../mocks/coffes';
+import { CoffeType } from '../../types/CoffeType';
 
 export function Home() {
+  const [filterSelected, setFilterSelected] = useState<CoffeType | null>(null);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.background} />
@@ -36,30 +38,65 @@ export function Home() {
         style={styles.principalCoffes}
         contentContainerStyle={styles.principalCoffesContent}
       >
-        {fazermockdps.map((item) => (
-          <CoffePrincipalCard key={item} />
+        {principalCoffes.map((item) => (
+          <CoffePrincipalCard key={item.id} coffe={item} />
         ))}
       </ScrollView>
 
+      {/* TODO FAZZER DE QUANDO ELE TÁ SELECIONADO */}
+      {/* filtros do café */}
       <Text style={styles.filterTitle}>
         Nossos cafés
       </Text>
-
       <View style={styles.filterContainer}>
-        {fazermockdps.map((item) => (
-          <Filter key={item} />
+        {coffeFilterType.map((item) => (
+          <Filter
+            key={item}
+            filter={item}
+            selected={filterSelected === item}
+            onSelect={setFilterSelected}
+          />
         ))}
       </View>
 
+      {/* listagem dos cafés tradicionais */}
       <Text style={styles.coffeListTitle}>
         tradicionais
       </Text>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: 12 }}
+        contentContainerStyle={styles.coffeList}
       >
-        {fazermockdps.map((item) => (
-          <CoffeCard key={item} />
+        {traditionalCoffees.map((item) => (
+          <CoffeCard key={item.id} coffe={item} />
+        ))}
+      </ScrollView>
+
+      {/* listagem dos cafés doces */}
+      <Text style={styles.coffeListTitle}>
+        Doces
+      </Text>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.coffeList}
+        contentContainerStyle={styles.coffeList}
+      >
+        {sweetCoffees.map((item) => (
+          <CoffeCard key={item.id} coffe={item} />
+        ))}
+      </ScrollView>
+
+      {/* listagem dos cafés especiais */}
+      <Text style={styles.coffeListTitle}>
+        Especiais
+      </Text>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.coffeList}
+        contentContainerStyle={styles.coffeList}
+      >
+        {specialtyCoffees.map((item) => (
+          <CoffeCard key={item.id} coffe={item} />
         ))}
       </ScrollView>
     </ScrollView>
