@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, TouchableOpacityProps } from 'react-native';
-import ExpressoSvg from '../../assets/coffes/Expresso.svg'
 import { styles } from './styles';
 import { Coffes } from '../../types/Coffes';
 
@@ -8,9 +7,9 @@ type Props = TouchableOpacityProps & {
   coffe: Coffes;
 }
 
-export function CoffePrincipalCard({ coffe: { type, name, description, price, image: Image } }: Props) {
+export function CoffePrincipalCard({ coffe: { type, name, description, price, image: Image }, ...rest }: Props) {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} {...rest}>
       <Image
         style={{ marginTop: -40 }}
       />
@@ -36,6 +35,6 @@ export function CoffePrincipalCard({ coffe: { type, name, description, price, im
           {price}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }

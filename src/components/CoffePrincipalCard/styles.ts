@@ -37,6 +37,7 @@ export const styles = StyleSheet.create({
     color: THEME.colors.product.purple_dark,
     fontFamily: THEME.font_family.roboto.bold,
     fontSize: THEME.font_size.roboto.tag,
+    textTransform: 'capitalize'
   },
   title: {
     color: THEME.colors.base.gray_200,

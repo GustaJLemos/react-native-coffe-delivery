@@ -9,7 +9,7 @@ type Props = TouchableOpacityProps & {
   type: 'purple' | 'yellow';
 }
 
-export function Button({ title, type }: Props) {
+export function Button({ title, type, ...rest }: Props) {
   // TODO tenq fazer a animação de onFocus aq
   return (
     <TouchableOpacity
@@ -19,6 +19,7 @@ export function Button({ title, type }: Props) {
           backgroundColor: type === 'purple' ? THEME.colors.product.purple_dark : THEME.colors.product.yellow_dark
         }
       ]}
+      {...rest}
     >
       <Text style={styles.text}>
         {title}

@@ -8,9 +8,9 @@ type Props = TouchableOpacityProps & {
   coffe: Coffes;
 }
 
-export function CoffeCard({ coffe: { name, description, price, image: Image } }: Props) {
+export function CoffeCard({ coffe: { name, description, price, image: Image }, ...rest }: Props) {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} {...rest}>
       <Image
         style={{ marginTop: -15 }}
       />
@@ -33,6 +33,6 @@ export function CoffeCard({ coffe: { name, description, price, image: Image } }:
           </Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
