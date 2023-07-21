@@ -7,14 +7,16 @@ import { ArrowLeft } from 'phosphor-react-native';
 import { useNavigation } from '@react-navigation/native'
 import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationProps';
 import { useCartStore } from '../../store/cartStore';
+import { calculateAllQuantityItem } from '../../utils/calculateAllQuantityItem';
 
 type Props = ViewProps & {
   goBack?: boolean,
   title?: string,
-  showCart?: boolean
+  showCart?: boolean,
+  iconColor?: string,
 }
 
-export function Header({ goBack = false, title = '', showCart = true, ...rest }: Props) {
+export function Header({ goBack = false, title = '', showCart = true, iconColor = THEME.colors.product.yellow_dark, ...rest }: Props) {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
   const coffeAddedToCart = useCartStore((state) => state.coffeAddedToCart);
 
@@ -57,14 +59,14 @@ export function Header({ goBack = false, title = '', showCart = true, ...rest }:
           {coffeAddedToCart.length > 0 && (
             <View style={styles.coffesInCart}>
               <Text style={styles.coffesInCartText}>
-                {coffeAddedToCart.length}
+                {calculateAllQuantityItem(coffeAddedToCart)}
               </Text>
             </View>
           )}
           <ShoppingCart
             size={20}
             weight="fill"
-            color={coffeAddedToCart.length > 0 ? THEME.colors.product.purple : THEME.colors.product.yellow_dark}
+            color={coffeAddedToCart.length > 0 ? THEME.colors.product.purple : iconColor}
           />
         </TouchableOpacity>
       ) : (

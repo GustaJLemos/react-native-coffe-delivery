@@ -14,6 +14,7 @@ import { Coffes } from '../../types/Coffes';
 import { useCartStore } from '../../store/cartStore';
 import { CoffeSize } from '../../types/CoffeSize';
 import { CoffeAddedToCart } from '../../types/CoffeAddedToCart';
+import { THEME } from '../../theme';
 
 export function CoffeDetails() {
   const [coffeSizeSelected, setCoffeSizeSelected] = useState<CoffeSize | null>(null);
@@ -23,26 +24,34 @@ export function CoffeDetails() {
 
   const cartStore = useCartStore((state) => state)
   const coffeSelected = cartStore.coffeSelected
-  {/* TODO tenho q fazer função pra passar esses parâmetros no meu zustand */ }
 
   function handleAddCoffeToCart() {
     let alreadyAddedToTheList = cartStore.coffeAddedToCart.find((item) => item.id === coffeSelected.id && item.size === coffeSizeSelected)
 
+    cartStore.setShowCoffeToast(true);
+
     if (alreadyAddedToTheList?.id) {
-      console.log('cai aq porra')
-      cartStore.updateCoffeQuantityById(coffeSelected.id, alreadyAddedToTheList.quantity + 1)
+      cartStore.updateCoffeQuantityById({
+        id: coffeSelected.id,
+        newQuantity: alreadyAddedToTheList.quantity + coffeCounter,
+        itemSize: coffeSizeSelected
+      })
     } else {
       cartStore.setCoffeAddedToCart({ ...coffeSelected, size: coffeSizeSelected, quantity: coffeCounter })
     }
 
     alreadyAddedToTheList = {} as CoffeAddedToCart;
+
     navigation.goBack()
   }
+
+  // TODO fazer animação de fumaçinha
+  // TODO caralho seria muito massa fazer uma animação de quando o cara selecionar o tamanho a imagem do coffe aumeenta ou diminui
 
   return (
     <View style={styles.container}>
       <View style={styles.background}>
-        <Header goBack />
+        <Header goBack iconColor={THEME.colors.base.white} />
 
         <View style={styles.textContent}>
           <View style={styles.tagContainer}>

@@ -12,6 +12,19 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     padding: 32,
   },
+  emptyListContainer: {
+    width: '100%',
+    height: 260,
+    justifyContent: 'center',
+    paddingHorizontal: 32
+  },
+  emptyListText: {
+    color: THEME.colors.base.gray_400,
+    fontFamily: THEME.font_family.roboto.regular,
+    fontSize: THEME.font_size.roboto.text_sm,
+    marginTop: 12,
+    marginBottom: 32,
+  },
   excludeContainer: {
     width: '100%',
     height: 120,
@@ -54,12 +67,4 @@ export const styles = StyleSheet.create({
     fontFamily: THEME.font_family.baloo.bold,
     fontSize: THEME.font_size.baloo.title_md,
   },
-  emptyListText: {
-    color: THEME.colors.base.gray_400,
-    fontFamily: THEME.font_family.baloo.bold,
-    fontSize: THEME.font_size.baloo.title_xs,
-    textAlign: 'center',
-    paddingHorizontal: 32,
-    marginTop: 36
-  }
 });

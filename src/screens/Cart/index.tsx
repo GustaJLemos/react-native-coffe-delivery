@@ -11,23 +11,24 @@ import { useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationProps';
 import { useCartStore } from '../../store/cartStore';
 import { calculateItemPrices } from '../../utils/calculateItemPrices';
+import { ShoppingCart } from 'phosphor-react-native';
 
 export function Cart() {
-  const [totalPrice, setTotalPrice] = useState<string>('');
+  // const [totalPrice, setTotalPrice] = useState<string>('');
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   const coffeAddedToCart = useCartStore((state) => state.coffeAddedToCart);
+  const setShowCoffeToast = useCartStore((state) => state.setShowCoffeToast);
 
   function handleNavigateToFinishPurchase() {
     navigation.navigate('FinishPurchaseScreen')
   }
 
+  // TODO testar essa porra aq dps, provavelmente isso aq sai, eu só preciso exibir, e dps de um tempo fazer esse componente sair
   useEffect(() => {
-    setTotalPrice(calculateItemPrices(coffeAddedToCart));
-  }, [coffeAddedToCart])
-
-  // TODO terminar função de deletar itens
+    setShowCoffeToast(false);
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -39,9 +40,23 @@ export function Cart() {
       />
 
       {coffeAddedToCart.length === 0 && (
-        <Text style={styles.emptyListText}>
-          Nenhum item adicionado ao carrinho... Que tal adicionar algum?
-        </Text>
+        <View style={styles.emptyListContainer}>
+          <View style={{ alignItems: 'center' }}>
+            <ShoppingCart
+              size={20}
+              weight="fill"
+              color={THEME.colors.base.gray_500}
+            />
+            <Text style={styles.emptyListText}>
+              Seu carrinho está vazio
+            </Text>
+          </View>
+          <Button
+            title='Ver catálogo'
+            type='purple'
+            onPress={() => navigation.goBack()}
+          />
+        </View>
       )}
 
       <ScrollView
@@ -66,7 +81,7 @@ export function Cart() {
               Valor total
             </Text>
             <Text style={styles.finalPrice}>
-              R$ {totalPrice ? totalPrice : '**.**'}
+              R$ {coffeAddedToCart.length > 0 ? calculateItemPrices(coffeAddedToCart) : '**.**'}
             </Text>
           </View>
 

@@ -12,16 +12,20 @@ type Props = {
 }
 
 export function CoffeCardAddedToCart({ coffe: { name, size, id, quantity, image: Image } }: Props) {
-  const updateCoffeQuantity = useCartStore((state) => state.updateCoffeQuantityById);
+  const cartStore = useCartStore((state) => state);
 
   const [coffeCounter, setCoffeCounter] = useState<number>(quantity);
 
   function handleUpdateCoffeQuantity(newCount: number) {
-    setCoffeCounter(newCount);
-    updateCoffeQuantity(id, newCount);
+    let itemToUpdateQuantity =
+
+      setCoffeCounter(newCount);
+    cartStore.updateCoffeQuantityById({ id, newQuantity: newCount, itemSize: size });
   }
 
-  // TODO dar uma boa olhada na lógica do card
+  function handleDeleteCoffeById() {
+    cartStore.deleteCoffeAddedById(id, size);
+  }
 
   return (
     <View style={styles.container}>
@@ -43,7 +47,10 @@ export function CoffeCardAddedToCart({ coffe: { name, size, id, quantity, image:
             setCount={handleUpdateCoffeQuantity}
             style={styles.coffeCounterContainer}
           />
-          <TouchableOpacity style={styles.trashIconContainer}>
+          <TouchableOpacity
+            style={styles.trashIconContainer}
+            onPress={handleDeleteCoffeById}
+          >
             <Trash size={20} color={THEME.colors.product.purple} />
           </TouchableOpacity>
         </View>
