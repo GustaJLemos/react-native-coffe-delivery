@@ -6,6 +6,7 @@ import { Button } from '../../components/Button';
 import { useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationProps';
 import { useCartStore } from '../../store/cartStore';
+import Animated, { FadeIn, SlideInLeft, SlideInRight, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 export function FinishPurchase() {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
@@ -19,7 +20,9 @@ export function FinishPurchase() {
 
   return (
     <View style={styles.container}>
-      <IlustrationSvg />
+      <Animated.View entering={SlideInLeft.duration(1000)}>
+        <IlustrationSvg />
+      </Animated.View>
 
       <View>
         <Text style={styles.title}>
@@ -29,11 +32,13 @@ export function FinishPurchase() {
           Agora é só aguardar que logo o café {'\n'} chegará até você!
         </Text>
 
-        <Button
-          title='Ir para a home'
-          type='purple'
-          onPress={handleClearAllCoffeAndNavigateToHome}
-        />
+        <Animated.View entering={FadeIn.delay(1000)}>
+          <Button
+            title='Ir para a home'
+            type='purple'
+            onPress={handleClearAllCoffeAndNavigateToHome}
+          />
+        </Animated.View>
       </View>
     </View>
   );
