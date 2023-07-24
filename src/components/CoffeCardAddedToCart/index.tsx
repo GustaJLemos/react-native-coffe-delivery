@@ -9,9 +9,10 @@ import { useCartStore } from '../../store/cartStore';
 
 type Props = {
   coffe: CoffeAddedToCart;
+  deleteCoffe: (id: string, size: string) => void;
 }
 
-export function CoffeCardAddedToCart({ coffe: { name, size, id, quantity, image: Image } }: Props) {
+export function CoffeCardAddedToCart({ coffe: { name, size, id, quantity, image: Image }, deleteCoffe }: Props) {
   const cartStore = useCartStore((state) => state);
 
   const [coffeCounter, setCoffeCounter] = useState<number>(quantity);
@@ -23,9 +24,7 @@ export function CoffeCardAddedToCart({ coffe: { name, size, id, quantity, image:
     cartStore.updateCoffeQuantityById({ id, newQuantity: newCount, itemSize: size });
   }
 
-  function handleDeleteCoffeById() {
-    cartStore.deleteCoffeAddedById(id, size);
-  }
+
 
   return (
     <View style={styles.container}>
@@ -49,7 +48,7 @@ export function CoffeCardAddedToCart({ coffe: { name, size, id, quantity, image:
           />
           <TouchableOpacity
             style={styles.trashIconContainer}
-            onPress={handleDeleteCoffeById}
+            onPress={() => deleteCoffe(id, size)}
           >
             <Trash size={20} color={THEME.colors.product.purple} />
           </TouchableOpacity>

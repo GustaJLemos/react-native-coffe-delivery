@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
 import { styles } from './styles';
@@ -15,20 +15,33 @@ import { ShoppingCart } from 'phosphor-react-native';
 import Animated, { FadeIn, Layout, SlideInDown, SlideInRight, SlideInUp, SlideOutRight } from 'react-native-reanimated';
 import { Swipeable } from 'react-native-gesture-handler';
 
+type DeleteCoffe = {
+  id: string,
+  size: string,
+  index: number,
+}
+
 export function Cart() {
   // const [totalPrice, setTotalPrice] = useState<string>('');
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
-  const coffeAddedToCart = useCartStore((state) => state.coffeAddedToCart);
-  const setShowCoffeToast = useCartStore((state) => state.setShowCoffeToast);
+  const cartStore = useCartStore((state) => state);
+  const coffeAddedToCart = cartStore.coffeAddedToCart;
+
+  const swipeableRef = useRef<Swipeable[]>([]);
 
   function handleNavigateToFinishPurchase() {
     navigation.navigate('FinishPurchaseScreen')
   }
 
+  function handleDeleteCoffeById({ id, size, index }: DeleteCoffe) {
+    swipeableRef.current?.[index].close();
+    cartStore.deleteCoffeAddedById(id, size);
+  }
+
   useEffect(() => {
-    setShowCoffeToast(false);
+    cartStore.setShowCoffeToast(false);
   }, [])
 
   return (
@@ -72,7 +85,14 @@ export function Cart() {
             layout={Layout.springify()}
           >
             <Swipeable
-              leftThreshold={20}
+              ref={(ref) => {
+                if (ref) {
+                  swipeableRef.current?.push(ref);
+                }
+              }}
+              overshootLeft={false}
+              onSwipeableOpen={() => handleDeleteCoffeById({ id: item.id, size: item.size, index })}
+              leftThreshold={100}
               renderRightActions={() => null}
               renderLeftActions={() => (
                 <View style={styles.swipeableDelete}>
@@ -82,6 +102,7 @@ export function Cart() {
             >
               <CoffeCardAddedToCart
                 coffe={item}
+                deleteCoffe={() => handleDeleteCoffeById({ id: item.id, size: item.size, index })}
               />
             </Swipeable>
           </Animated.View>

@@ -6,6 +6,7 @@ import { useFonts as useFontsBaloo, Baloo2_700Bold } from '@expo-google-fonts/ba
 import { THEME } from './src/theme';
 
 import { AppRoutes } from './src/routes/AppRoutes.routes';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
   const [fontRobotoLoaded] = useFontsRoboto({ Roboto_400Regular, Roboto_700Bold })
@@ -18,15 +19,9 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar style='light' backgroundColor={THEME.colors.base.gray_100} />
       <AppRoutes />
-    </View>
+    </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
