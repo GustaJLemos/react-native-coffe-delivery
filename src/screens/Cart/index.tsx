@@ -12,6 +12,7 @@ import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationP
 import { useCartStore } from '../../store/cartStore';
 import { calculateItemPrices } from '../../utils/calculateItemPrices';
 import { ShoppingCart } from 'phosphor-react-native';
+import Animated, { FadeIn, SlideInDown, SlideInUp } from 'react-native-reanimated';
 
 export function Cart() {
   // const [totalPrice, setTotalPrice] = useState<string>('');
@@ -25,7 +26,6 @@ export function Cart() {
     navigation.navigate('FinishPurchaseScreen')
   }
 
-  // TODO testar essa porra aq dps, provavelmente isso aq sai, eu só preciso exibir, e dps de um tempo fazer esse componente sair
   useEffect(() => {
     setShowCoffeToast(false);
   }, [])
@@ -40,7 +40,7 @@ export function Cart() {
       />
 
       {coffeAddedToCart.length === 0 && (
-        <View style={styles.emptyListContainer}>
+        <Animated.View entering={FadeIn.duration(1000)} style={styles.emptyListContainer}>
           <View style={{ alignItems: 'center' }}>
             <ShoppingCart
               size={20}
@@ -56,7 +56,7 @@ export function Cart() {
             type='purple'
             onPress={() => navigation.goBack()}
           />
-        </View>
+        </Animated.View>
       )}
 
       <ScrollView
