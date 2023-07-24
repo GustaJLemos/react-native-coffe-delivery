@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, TextInput, View, ScrollView } from 'react-native';
+import { Text, TextInput, View, ScrollView, Dimensions } from 'react-native';
 import { MagnifyingGlass } from 'phosphor-react-native';
 import { styles } from './styles';
 import { Header } from '../../components/Header';
@@ -14,6 +14,9 @@ import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationP
 import { Coffes } from '../../types/Coffes';
 import { useCartStore } from '../../store/cartStore';
 import { CoffeAddedToast } from '../../components/CoffeAddedToast';
+import { Keyframe, interpolate, useAnimatedStyle, useSharedValue, withSequence, withTiming, Easing } from 'react-native-reanimated';
+
+const { height } = Dimensions.get('window');
 
 export function Home() {
   const [filterSelected, setFilterSelected] = useState<CoffeType | null>(null);
@@ -22,10 +25,33 @@ export function Home() {
   const cartStore = useCartStore((state) => state)
   const setCoffeSelected = cartStore.setCoffeSelected;
 
+  const coffeAddedOpacity = useSharedValue(0);
+  const coffedAddedTranslateY = useSharedValue(0);
+
   function handleNavigateToCoffeDetails(coffeSelected: Coffes) {
     setCoffeSelected(coffeSelected);
     navigation.navigate('CoffeDetailsScreen');
   }
+
+  const coffeAddedAnimation = useAnimatedStyle(() => {
+    return ({
+      opacity: coffeAddedOpacity.value,
+      transform: [
+        { translateY: interpolate(coffedAddedTranslateY.value, [0, 1, 1, 0], [0, height, height, 0]) }
+      ]
+    });
+  })
+
+  // TODO tenq fazer essa animação certo
+  useEffect(() => {
+    if (cartStore.showCoffeToast) {
+      // coffeAddedOpacity.value = withSequence(withTiming(1), withTiming(0, { duration: 10000 }));
+      coffeAddedOpacity.value = 1;
+      coffedAddedTranslateY.value = withSequence(withTiming(0), withTiming(1, { duration: 10000 }), withTiming(1, { duration: 10000, easing: Easing.linear }), withTiming(0))
+    } else {
+      coffeAddedOpacity.value = 0;
+    }
+  }, [cartStore.showCoffeToast])
 
   return (
     <>
@@ -137,9 +163,9 @@ export function Home() {
           ))}
         </ScrollView>
       </ScrollView>
-      {cartStore.showCoffeToast && (
-        <CoffeAddedToast />
-      )}
+      <CoffeAddedToast
+        style={coffeAddedAnimation}
+      />
     </>
   );
 }
