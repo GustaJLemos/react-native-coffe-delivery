@@ -9,12 +9,12 @@ import { coffeSizesOptions } from '../../mocks/coffes';
 import { Select } from '../../components/Select';
 import { CoffeQuantityCounter } from '../../components/CoffeQuantityCounter';
 import { Button } from '../../components/Button';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { Coffes } from '../../types/Coffes';
+import { useNavigation } from '@react-navigation/native';
 import { useCartStore } from '../../store/cartStore';
 import { CoffeSize } from '../../types/CoffeSize';
 import { CoffeAddedToCart } from '../../types/CoffeAddedToCart';
 import { THEME } from '../../theme';
+import Animated, { Easing, Layout, SlideInLeft, SlideInRight, SlideOutRight, interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
 
 export function CoffeDetails() {
   const [coffeSizeSelected, setCoffeSizeSelected] = useState<CoffeSize | null>(null);
@@ -22,8 +22,10 @@ export function CoffeDetails() {
 
   const navigation = useNavigation();
 
-  const cartStore = useCartStore((state) => state)
-  const coffeSelected = cartStore.coffeSelected
+  const cartStore = useCartStore((state) => state);
+  const coffeSelected = cartStore.coffeSelected;
+
+  const sizeRequired = useSharedValue(0);
 
   function handleAddCoffeToCart() {
     let alreadyAddedToTheList = cartStore.coffeAddedToCart.find((item) => item.id === coffeSelected.id && item.size === coffeSizeSelected)
@@ -45,11 +47,29 @@ export function CoffeDetails() {
     navigation.goBack()
   }
 
+  const sizeRequiredTextAnimation = useAnimatedStyle(() => {
+    return ({
+      color: interpolateColor(
+        sizeRequired.value,
+        [0, 1],
+        [THEME.colors.base.gray_400, THEME.colors.feedback.red_dark]
+      )
+    });
+  });
+
   // TODO fazer animação de fumaçinha
   // TODO caralho seria muito massa fazer uma animação de quando o cara selecionar o tamanho a imagem do coffe aumeenta ou diminui
 
+  function onPress() {
+    console.log('to aq?')
+    sizeRequired.value = withSequence(withTiming(1), withTiming(0))
+  }
+
+
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+    >
       <View style={styles.background}>
         <Header goBack iconColor={THEME.colors.base.white} />
 
@@ -83,9 +103,9 @@ export function CoffeDetails() {
         />
       </View>
       <View style={styles.bottomContainer}>
-        <Text style={styles.sizeText}>
+        <Animated.Text style={[styles.sizeText, sizeRequiredTextAnimation]}>
           Selecione o tamanho:
-        </Text>
+        </Animated.Text>
         <View style={styles.sizeOptions}>
           {coffeSizesOptions.map((item) => (
             <Select
@@ -93,6 +113,7 @@ export function CoffeDetails() {
               text={item}
               selected={coffeSizeSelected === item}
               onSelect={setCoffeSizeSelected}
+              animationValue={sizeRequired}
             />
           ))}
         </View>
@@ -109,8 +130,7 @@ export function CoffeDetails() {
           <Button
             title='Adicionar'
             type='purple'
-            onPress={handleAddCoffeToCart}
-            disabled={coffeSizeSelected === null}
+            onPress={coffeSizeSelected === null ? onPress : handleAddCoffeToCart}
           />
         </View>
       </View>

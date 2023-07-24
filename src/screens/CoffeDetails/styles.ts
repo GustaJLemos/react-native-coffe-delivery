@@ -75,7 +75,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 32
   },
   sizeText: {
-    color: THEME.colors.base.gray_400,
     fontFamily: THEME.font_family.roboto.regular,
     fontSize: THEME.font_size.roboto.text_sm,
     marginBottom: 8
