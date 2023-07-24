@@ -12,7 +12,8 @@ import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationP
 import { useCartStore } from '../../store/cartStore';
 import { calculateItemPrices } from '../../utils/calculateItemPrices';
 import { ShoppingCart } from 'phosphor-react-native';
-import Animated, { FadeIn, SlideInDown, SlideInUp } from 'react-native-reanimated';
+import Animated, { FadeIn, Layout, SlideInDown, SlideInRight, SlideInUp, SlideOutRight } from 'react-native-reanimated';
+import { Swipeable } from 'react-native-gesture-handler';
 
 export function Cart() {
   // const [totalPrice, setTotalPrice] = useState<string>('');
@@ -64,16 +65,29 @@ export function Cart() {
         showsVerticalScrollIndicator={false}
       >
         {coffeAddedToCart.map((item, index) => (
-          <CoffeCardAddedToCart
+          <Animated.View
             key={item.id + index}
-            coffe={item}
-          />
+            entering={SlideInRight}
+            exiting={SlideOutRight}
+            layout={Layout.springify()}
+          >
+            <Swipeable
+              leftThreshold={20}
+              renderRightActions={() => null}
+              renderLeftActions={() => (
+                <View style={styles.swipeableDelete}>
+                  <Trash size={28} color={THEME.colors.feedback.red_dark} />
+                </View>
+              )}
+            >
+              <CoffeCardAddedToCart
+                coffe={item}
+              />
+            </Swipeable>
+          </Animated.View>
         ))}
       </ScrollView>
-      {/* TODO fazer função de deletar */}
-      {/* <View style={styles.excludeContainer}>
-        <Trash size={28} color={THEME.colors.feedback.red_dark} />
-      </View> */}
+
       {coffeAddedToCart.length > 0 && (
         <View style={styles.bottomContainer}>
           <View style={styles.bottomText}>

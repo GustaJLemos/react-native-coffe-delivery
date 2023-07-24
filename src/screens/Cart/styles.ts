@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 32,
   },
-  excludeContainer: {
+  swipeableDelete: {
     width: '100%',
     height: 120,
     paddingHorizontal: 32,
