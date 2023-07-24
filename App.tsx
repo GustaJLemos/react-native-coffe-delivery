@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { useFonts as useFontsRoboto, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto';
