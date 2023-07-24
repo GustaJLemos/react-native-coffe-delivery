@@ -1,22 +1,34 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
 import { styles } from './styles';
 import { useCartStore } from '../../store/cartStore';
 import { ArrowRight, ShoppingCart } from 'phosphor-react-native';
 import { THEME } from '../../theme';
 import { useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationProps';
+import Animated, { SlideInDown, SlideInUp } from 'react-native-reanimated';
 
-export function CoffeAddedToast() {
+const TouchabledAnimated = Animated.createAnimatedComponent(TouchableOpacity);
+
+type Props = TouchableOpacityProps;
+
+export function CoffeAddedToast({ ...rest }: Props) {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   const coffeAddedToCart = useCartStore((state) => state.coffeAddedToCart);
+
+  if (coffeAddedToCart?.length === 0) {
+    return <></>;
+  }
+
   const lastCoffeAdded = coffeAddedToCart[coffeAddedToCart.length - 1];
 
   return (
-    <TouchableOpacity
-      style={styles.container}
+    <TouchabledAnimated
+      style={[styles.container, rest.style]}
       onPress={() => navigation.navigate('CartScreen')}
+    // entering={SlideInDown.duration(5000)}
+    // exiting={SlideInUp}
     >
       <View style={styles.cartIconContainer}>
         <View style={styles.coffesInCart}>
@@ -46,6 +58,6 @@ export function CoffeAddedToast() {
           color={THEME.colors.product.purple}
         />
       </View>
-    </TouchableOpacity>
+    </TouchabledAnimated>
   );
 }

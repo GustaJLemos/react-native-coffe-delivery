@@ -3,6 +3,8 @@ import { THEME } from '../../theme';
 
 export const styles = StyleSheet.create({
   container: {
+    position: 'absolute',
+    bottom: 0,
     width: '100%',
     paddingHorizontal: 32,
     paddingVertical: 28,

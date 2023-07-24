@@ -1,10 +1,10 @@
 import React from 'react';
-import { Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { Text, Pressable, PressableProps } from 'react-native';
 
 import { styles } from './styles';
 import { THEME } from '../../theme';
 
-type Props = TouchableOpacityProps & {
+type Props = PressableProps & {
   title: string;
   type: 'purple' | 'yellow';
   disabled?: boolean;
@@ -13,7 +13,7 @@ type Props = TouchableOpacityProps & {
 export function Button({ title, type, disabled, ...rest }: Props) {
   // TODO tenq fazer a animação de onFocus aq
   return (
-    <TouchableOpacity
+    <Pressable
       style={[
         styles.container,
         {
@@ -27,6 +27,6 @@ export function Button({ title, type, disabled, ...rest }: Props) {
       <Text style={styles.text}>
         {title}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
