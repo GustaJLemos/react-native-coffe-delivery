@@ -12,11 +12,19 @@ export function AppRoutes() {
   return (
     <NavigationContainer>
       <NativeStack.Navigator
-        screenOptions={{ headerShown: false }}
+        screenOptions={{ headerShown: false, animation: 'none' }}
       >
         <NativeStack.Screen name="HomeScreen" component={Home} />
-        <NativeStack.Screen name="CoffeDetailsScreen" component={CoffeDetails} />
-        <NativeStack.Screen name="CartScreen" component={Cart} />
+        <NativeStack.Screen
+          name="CoffeDetailsScreen"
+          component={CoffeDetails}
+          options={{ animation: 'slide_from_right' }}
+        />
+        <NativeStack.Screen
+          name="CartScreen"
+          component={Cart}
+          options={{ animation: 'slide_from_right' }}
+        />
         <NativeStack.Screen name="FinishPurchaseScreen" component={FinishPurchase} />
       </NativeStack.Navigator>
     </NavigationContainer>
