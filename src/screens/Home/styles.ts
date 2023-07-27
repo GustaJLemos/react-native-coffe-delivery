@@ -67,6 +67,8 @@ export const styles = StyleSheet.create({
   },
   coffeList: {
     flex: 1,
+  },
+  contentCoffeList: {
     gap: 12
   }
 });

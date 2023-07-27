@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Text, TextInput, View, ScrollView, Dimensions } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { Text, TextInput, View, ScrollView, Dimensions, TouchableOpacity } from 'react-native';
 import { MagnifyingGlass } from 'phosphor-react-native';
 import { styles } from './styles';
 import { Header } from '../../components/Header';
@@ -14,12 +14,22 @@ import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationP
 import { Coffes } from '../../types/Coffes';
 import { useCartStore } from '../../store/cartStore';
 import { CoffeAddedToast } from '../../components/CoffeAddedToast';
-import { Keyframe, interpolate, useAnimatedStyle, useSharedValue, withSequence, withTiming, Easing } from 'react-native-reanimated';
+import Animated, { Keyframe, interpolate, useAnimatedStyle, useSharedValue, withSequence, withTiming, Easing, FadeIn, SlideInDown, SlideInUp, SlideInRight, useAnimatedScrollHandler, Extrapolate, runOnJS } from 'react-native-reanimated';
+
+const TouchabledAnimated = Animated.createAnimatedComponent(TouchableOpacity);
 
 const { height } = Dimensions.get('window');
 
+const COFFE_PRINCIPAL_CARD_WIDTH = 200
+
+const COFFE_PRINCIPAL_GAP = 32
+
+const SCROLLVIEW_CARD_SIZE = COFFE_PRINCIPAL_CARD_WIDTH - COFFE_PRINCIPAL_GAP;
+
 export function Home() {
   const [filterSelected, setFilterSelected] = useState<CoffeType | null>(null);
+  const [cardOnFocus, setCardOnFocus] = useState<number>(0);
+
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   const cartStore = useCartStore((state) => state)
@@ -27,6 +37,9 @@ export function Home() {
 
   const coffeAddedOpacity = useSharedValue(0);
   const coffedAddedTranslateY = useSharedValue(0);
+  const penes = useSharedValue(0);
+
+  const cuRef = useRef<{ xPosition: number }[]>([]);
 
   function handleNavigateToCoffeDetails(coffeSelected: Coffes) {
     setCoffeSelected(coffeSelected);
@@ -53,71 +66,125 @@ export function Home() {
     }
   }, [cartStore.showCoffeToast])
 
+  const principalCoffeAnimation = useAnimatedStyle(() => {
+    return ({
+      backgroundColor: 'red',
+      transform: [
+        { scale: interpolate(penes.value, [cuRef.current?.[0]?.xPosition, cuRef.current?.[0]?.xPosition + SCROLLVIEW_CARD_SIZE], [1, 0.8], Extrapolate.CLAMP) }
+      ]
+    });
+  })
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      // console.log(event.contentOffset.x);
+      penes.value = event.contentOffset.x
+
+      console.log('tom aq?')
+      switch (event.contentOffset.x) {
+        case cuRef.current?.[0]?.xPosition || cuRef.current?.[0]?.xPosition + SCROLLVIEW_CARD_SIZE:
+          'worklet';
+          console.log('a0q')
+          runOnJS(setCardOnFocus)(0);
+          break;
+        case cuRef.current?.[1]?.xPosition || cuRef.current?.[1]?.xPosition + SCROLLVIEW_CARD_SIZE:
+          'worklet';
+          console.log('a1q')
+          runOnJS(setCardOnFocus)(1);
+          break;
+        case cuRef.current?.[2]?.xPosition || cuRef.current?.[2]?.xPosition + SCROLLVIEW_CARD_SIZE:
+          'worklet';
+          console.log('a2q')
+          runOnJS(setCardOnFocus)(2);
+          break;
+        default:
+          break;
+      }
+    }
+  })
+
   return (
     <>
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.background} />
+        <Animated.View style={styles.background} entering={SlideInUp.easing(Easing.linear).duration(1000)} />
 
-        <Header />
+        <Animated.View entering={FadeIn.delay(1000)}>
+          <Header />
 
-        {/* TODO colocar imagem de café aq no backfround */}
-        <Text style={styles.title}>
-          Encontre o café perfeito para qualquer hora do dia
-        </Text>
+          {/* TODO colocar imagem de café aq no backfround */}
+          <Text style={styles.title}>
+            Encontre o café perfeito para qualquer hora do dia
+          </Text>
 
-        {/* TODO Fazer função de pesquisa aq */}
-        <View style={styles.inputContainer}>
-          <MagnifyingGlass size={16} color={THEME.colors.base.gray_400} />
-          <TextInput
-            style={styles.input}
-            placeholder='Pesquisar'
-            placeholderTextColor={THEME.colors.base.gray_400}
-          />
-        </View>
+          {/* TODO Fazer função de pesquisa aq */}
+          <View style={styles.inputContainer}>
+            <MagnifyingGlass size={16} color={THEME.colors.base.gray_400} />
+            <TextInput
+              style={styles.input}
+              placeholder='Pesquisar'
+              placeholderTextColor={THEME.colors.base.gray_400}
+            />
+          </View>
+        </Animated.View>
 
-        <ScrollView
+        <Animated.ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.principalCoffes}
           contentContainerStyle={styles.principalCoffesContent}
+          entering={SlideInRight.delay(1500).duration(500)}
+          onScroll={scrollHandler}
+          pagingEnabled
+        // focusable
         >
-          {principalCoffes.map((item) => (
-            <CoffePrincipalCard
+          {principalCoffes?.map((item, index) => (
+            <TouchabledAnimated
               key={item.id}
-              coffe={item}
+              style={penes.value === (cuRef.current?.[0]?.xPosition || cuRef.current?.[0]?.xPosition + SCROLLVIEW_CARD_SIZE) && principalCoffeAnimation}
               onPress={() => handleNavigateToCoffeDetails(item)}
-            />
+              onLayout={(event) => { cuRef.current?.push({ xPosition: event.nativeEvent.layout.x }) }}
+              onBlur={() => { console.log('penis aq') }}
+              onFocus={(event) => { console.log('to aq nesse item?', event.nativeEvent.target) }}
+            >
+              <CoffePrincipalCard
+                key={item.id}
+                coffe={item}
+                onFocus={(event) => { console.log('to aq nesse item?', event.nativeEvent.target) }}
+                onBlur={() => { console.log('penis aq') }}
+              />
+            </TouchabledAnimated>
           ))}
-        </ScrollView>
+        </Animated.ScrollView>
 
-        {/* TODO FAZZER DE QUANDO ELE TÁ SELECIONADO */}
-        {/* filtros do café */}
-        <Text style={styles.filterTitle}>
-          Nossos cafés
-        </Text>
-        <View style={styles.filterContainer}>
-          {coffeFilterType.map((item) => (
-            <Filter
-              key={item}
-              filter={item}
-              selected={filterSelected === item}
-              onSelect={setFilterSelected}
-            />
-          ))}
-        </View>
-
-        {/* TODO mudar pra uma listagem só sera? */}
-        {/* listagem dos cafés tradicionais */}
-        <Text style={styles.coffeListTitle}>
-          tradicionais
-        </Text>
-        <ScrollView
+        <Animated.ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.coffeList}
+          style={styles.coffeList}
+          contentContainerStyle={styles.contentCoffeList}
+          entering={SlideInDown.delay(1500).duration(800)}
         >
+          {/* filtros do café */}
+          <Text style={styles.filterTitle}>
+            Nossos cafés
+          </Text>
+          <View style={styles.filterContainer}>
+            {coffeFilterType.map((item) => (
+              <Filter
+                key={item}
+                filter={item}
+                selected={filterSelected === item}
+                onSelect={setFilterSelected}
+              />
+            ))}
+          </View>
+
+          {/* TODO mudar pra uma listagem só sera? */}
+          {/* listagem dos cafés tradicionais */}
+          <Text style={styles.coffeListTitle}>
+            tradicionais
+          </Text>
           {traditionalCoffees.map((item) => (
             <CoffeCard
               key={item.id}
@@ -125,17 +192,11 @@ export function Home() {
               onPress={() => handleNavigateToCoffeDetails(item)}
             />
           ))}
-        </ScrollView>
 
-        {/* listagem dos cafés doces */}
-        <Text style={styles.coffeListTitle}>
-          Doces
-        </Text>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={styles.coffeList}
-          contentContainerStyle={styles.coffeList}
-        >
+          {/* listagem dos cafés doces */}
+          <Text style={styles.coffeListTitle}>
+            Doces
+          </Text>
           {sweetCoffees.map((item) => (
             <CoffeCard
               key={item.id}
@@ -143,17 +204,11 @@ export function Home() {
               onPress={() => handleNavigateToCoffeDetails(item)}
             />
           ))}
-        </ScrollView>
 
-        {/* listagem dos cafés especiais */}
-        <Text style={styles.coffeListTitle}>
-          Especiais
-        </Text>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={styles.coffeList}
-          contentContainerStyle={styles.coffeList}
-        >
+          {/* listagem dos cafés especiais */}
+          <Text style={styles.coffeListTitle}>
+            Especiais
+          </Text>
           {specialtyCoffees.map((item) => (
             <CoffeCard
               key={item.id}
@@ -161,7 +216,7 @@ export function Home() {
               onPress={() => handleNavigateToCoffeDetails(item)}
             />
           ))}
-        </ScrollView>
+        </Animated.ScrollView>
       </ScrollView>
       <CoffeAddedToast
         style={coffeAddedAnimation}

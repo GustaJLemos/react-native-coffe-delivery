@@ -131,6 +131,7 @@ export function CoffeDetails() {
             title='Adicionar'
             type='purple'
             onPress={coffeSizeSelected === null ? onPress : handleAddCoffeToCart}
+            style={{ opacity: coffeSizeSelected === null ? 0.5 : 1 }}
           />
         </View>
       </View>
