@@ -63,12 +63,6 @@ export const styles = StyleSheet.create({
     fontFamily: THEME.font_family.roboto.regular,
     fontSize: THEME.font_size.roboto.text_md,
   },
-  coffeImage: {
-    flex: 1,
-    position: 'absolute',
-    bottom: -60,
-    alignSelf: 'center'
-  },
   bottomContainer: {
     flex: 1,
     paddingTop: 42,

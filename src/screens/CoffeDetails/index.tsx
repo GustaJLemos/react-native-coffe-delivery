@@ -57,6 +57,17 @@ export function CoffeDetails() {
     });
   });
 
+  const coffeImageAnimation = useAnimatedStyle(() => {
+    return ({
+      width: sizeRequired.value * 1,
+      height: sizeRequired.value * 1,
+      flex: 1,
+      position: 'absolute',
+      bottom: -60,
+      alignSelf: 'center'
+    });
+  });
+
   // TODO fazer animação de fumaçinha
   // TODO caralho seria muito massa fazer uma animação de quando o cara selecionar o tamanho a imagem do coffe aumeenta ou diminui
 
@@ -97,10 +108,12 @@ export function CoffeDetails() {
           </Text>
         </View>
 
-        <Image
-          source={CoffePng}
-          style={styles.coffeImage}
-        />
+        <Animated.View style={coffeImageAnimation}>
+          <Image
+            source={CoffePng}
+            style={coffeImageAnimation}
+          />
+        </Animated.View>
       </View>
       <View style={styles.bottomContainer}>
         <Animated.Text style={[styles.sizeText, sizeRequiredTextAnimation]}>
