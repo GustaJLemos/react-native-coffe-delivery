@@ -42,11 +42,11 @@ export const styles = StyleSheet.create({
     marginLeft: -32,
     maxHeight: 280,
     marginBottom: 14,
-    marginRight: 32,
   },
   principalCoffesContent: {
-    gap: 32,
-    paddingHorizontal: 32
+    gap: 16,
+    paddingLeft: 64,
+    paddingRight: 64
   },
   filterTitle: {
     fontFamily: THEME.font_family.baloo.bold,

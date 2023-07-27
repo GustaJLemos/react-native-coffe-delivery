@@ -10,7 +10,7 @@ type Props = TouchableOpacityProps & {
 export function CoffePrincipalCard({ coffe: { type, name, description, price, image: Image }, ...rest }: Props) {
   // fazer animaçõs do card, do café aumentando de tamanho, e da size em si sdo negocio, a tag n muda o tamanho, mas o card, a imagem e as fonts ficam maiores ou menos de acordo com o foco
   return (
-    <TouchableOpacity style={styles.container} {...rest}>
+    <TouchableOpacity activeOpacity={1} style={styles.container} {...rest}>
       <Image
         style={{ marginTop: -40 }}
       />

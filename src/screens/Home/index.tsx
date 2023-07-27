@@ -22,13 +22,12 @@ const { height } = Dimensions.get('window');
 
 const COFFE_PRINCIPAL_CARD_WIDTH = 200
 
-const COFFE_PRINCIPAL_GAP = 32
+const COFFE_PRINCIPAL_GAP = 16
 
 const SCROLLVIEW_CARD_SIZE = COFFE_PRINCIPAL_CARD_WIDTH - COFFE_PRINCIPAL_GAP;
 
 export function Home() {
   const [filterSelected, setFilterSelected] = useState<CoffeType | null>(null);
-  const [cardOnFocus, setCardOnFocus] = useState<number>(0);
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
@@ -37,9 +36,7 @@ export function Home() {
 
   const coffeAddedOpacity = useSharedValue(0);
   const coffedAddedTranslateY = useSharedValue(0);
-  const penes = useSharedValue(0);
-
-  const cuRef = useRef<{ xPosition: number }[]>([]);
+  const scrollX = useSharedValue(0);
 
   function handleNavigateToCoffeDetails(coffeSelected: Coffes) {
     setCoffeSelected(coffeSelected);
@@ -58,7 +55,6 @@ export function Home() {
   // TODO tenq fazer essa animação certo
   useEffect(() => {
     if (cartStore.showCoffeToast) {
-      // coffeAddedOpacity.value = withSequence(withTiming(1), withTiming(0, { duration: 10000 }));
       coffeAddedOpacity.value = 1;
       coffedAddedTranslateY.value = withSequence(withTiming(0), withTiming(1, { duration: 10000 }), withTiming(1, { duration: 10000, easing: Easing.linear }), withTiming(0))
     } else {
@@ -66,40 +62,9 @@ export function Home() {
     }
   }, [cartStore.showCoffeToast])
 
-  const principalCoffeAnimation = useAnimatedStyle(() => {
-    return ({
-      backgroundColor: 'red',
-      transform: [
-        { scale: interpolate(penes.value, [cuRef.current?.[0]?.xPosition, cuRef.current?.[0]?.xPosition + SCROLLVIEW_CARD_SIZE], [1, 0.8], Extrapolate.CLAMP) }
-      ]
-    });
-  })
-
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
-      // console.log(event.contentOffset.x);
-      penes.value = event.contentOffset.x
-
-      console.log('tom aq?')
-      switch (event.contentOffset.x) {
-        case cuRef.current?.[0]?.xPosition || cuRef.current?.[0]?.xPosition + SCROLLVIEW_CARD_SIZE:
-          'worklet';
-          console.log('a0q')
-          runOnJS(setCardOnFocus)(0);
-          break;
-        case cuRef.current?.[1]?.xPosition || cuRef.current?.[1]?.xPosition + SCROLLVIEW_CARD_SIZE:
-          'worklet';
-          console.log('a1q')
-          runOnJS(setCardOnFocus)(1);
-          break;
-        case cuRef.current?.[2]?.xPosition || cuRef.current?.[2]?.xPosition + SCROLLVIEW_CARD_SIZE:
-          'worklet';
-          console.log('a2q')
-          runOnJS(setCardOnFocus)(2);
-          break;
-        default:
-          break;
-      }
+      scrollX.value = event.contentOffset.x
     }
   })
 
@@ -138,25 +103,38 @@ export function Home() {
           entering={SlideInRight.delay(1500).duration(500)}
           onScroll={scrollHandler}
           pagingEnabled
+          snapToInterval={SCROLLVIEW_CARD_SIZE}
+          decelerationRate={0}
+          scrollEventThrottle={16}
         // focusable
         >
-          {principalCoffes?.map((item, index) => (
-            <TouchabledAnimated
-              key={item.id}
-              style={penes.value === (cuRef.current?.[0]?.xPosition || cuRef.current?.[0]?.xPosition + SCROLLVIEW_CARD_SIZE) && principalCoffeAnimation}
-              onPress={() => handleNavigateToCoffeDetails(item)}
-              onLayout={(event) => { cuRef.current?.push({ xPosition: event.nativeEvent.layout.x }) }}
-              onBlur={() => { console.log('penis aq') }}
-              onFocus={(event) => { console.log('to aq nesse item?', event.nativeEvent.target) }}
-            >
-              <CoffePrincipalCard
+          {principalCoffes?.map((item, index) => {
+            const itemsRange = [
+              (index - 1) * SCROLLVIEW_CARD_SIZE, // previous item
+              index * SCROLLVIEW_CARD_SIZE, // current item
+              (index + 1) * SCROLLVIEW_CARD_SIZE, // next item
+            ]
+
+            const principalCoffeAnimation = useAnimatedStyle(() => {
+              return ({
+                transform: [
+                  { scale: interpolate(scrollX.value, itemsRange, [0.8, 1, 0.8], Extrapolate.CLAMP) }
+                ]
+              });
+            })
+
+            return (
+              <TouchabledAnimated
                 key={item.id}
-                coffe={item}
-                onFocus={(event) => { console.log('to aq nesse item?', event.nativeEvent.target) }}
-                onBlur={() => { console.log('penis aq') }}
-              />
-            </TouchabledAnimated>
-          ))}
+                style={principalCoffeAnimation}
+              >
+                <CoffePrincipalCard
+                  onPress={() => handleNavigateToCoffeDetails(item)}
+                  coffe={item}
+                />
+              </TouchabledAnimated>
+            )
+          })}
         </Animated.ScrollView>
 
         <Animated.ScrollView
