@@ -19,6 +19,7 @@ export function Filter({ filter, selected, onSelect }: Props) {
 
   const colorBgAnimatedStyles = useAnimatedStyle(() => {
     return ({
+      // dá pra fazer nesse interpolate um cor no meio, tipo um puprle com opacity pra dar aquele efeito
       backgroundColor: interpolateColor(colorAnimation.value, [0, 1], ['transparent', THEME.colors.product.purple]),
     })
   })

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Text, TextInput, View, ScrollView, Dimensions, TouchableOpacity } from 'react-native';
+import { Text, TextInput, View, ScrollView, Dimensions, TouchableOpacity, SectionList } from 'react-native';
 import { MagnifyingGlass } from 'phosphor-react-native';
 import { styles } from './styles';
 import { Header } from '../../components/Header';
@@ -15,6 +15,7 @@ import { Coffes } from '../../types/Coffes';
 import { useCartStore } from '../../store/cartStore';
 import { CoffeAddedToast } from '../../components/CoffeAddedToast';
 import Animated, { Keyframe, interpolate, useAnimatedStyle, useSharedValue, withSequence, withTiming, Easing, FadeIn, SlideInDown, SlideInUp, SlideInRight, useAnimatedScrollHandler, Extrapolate, runOnJS } from 'react-native-reanimated';
+import CoffeBeanSvg from '../../assets/coffes/CoffeBean.svg'
 
 const TouchabledAnimated = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -28,6 +29,8 @@ const SCROLLVIEW_CARD_SIZE = COFFE_PRINCIPAL_CARD_WIDTH - COFFE_PRINCIPAL_GAP;
 
 export function Home() {
   const [filterSelected, setFilterSelected] = useState<CoffeType | null>(null);
+
+  const scrollRef = useRef<Animated.ScrollView>(null);
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
@@ -93,6 +96,10 @@ export function Home() {
               placeholderTextColor={THEME.colors.base.gray_400}
             />
           </View>
+
+          <CoffeBeanSvg
+            style={styles.coffeBean}
+          />
         </Animated.View>
 
         <Animated.ScrollView
@@ -106,7 +113,6 @@ export function Home() {
           snapToInterval={SCROLLVIEW_CARD_SIZE}
           decelerationRate={0}
           scrollEventThrottle={16}
-        // focusable
         >
           {principalCoffes?.map((item, index) => {
             const itemsRange = [
@@ -142,6 +148,7 @@ export function Home() {
           style={styles.coffeList}
           contentContainerStyle={styles.contentCoffeList}
           entering={SlideInDown.delay(1500).duration(800)}
+          ref={scrollRef}
         >
           {/* filtros do café */}
           <Text style={styles.filterTitle}>
@@ -153,7 +160,11 @@ export function Home() {
                 key={item}
                 filter={item}
                 selected={filterSelected === item}
-                onSelect={setFilterSelected}
+                onSelect={(item) => {
+                  console.log('t0maq'),
+                    // setFilterSelected(item),
+                    scrollRef.current?.scrollTo({ y: 1200, animated: true })
+                }}
               />
             ))}
           </View>

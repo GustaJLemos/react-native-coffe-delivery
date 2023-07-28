@@ -37,6 +37,12 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 4,
   },
+  coffeBean: {
+    position: 'absolute',
+    right: 0,
+    bottom: -60,
+    zIndex: -1
+  },
   principalCoffes: {
     width: width,
     marginLeft: -32,
