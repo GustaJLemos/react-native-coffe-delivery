@@ -1,7 +1,7 @@
 import { Dimensions, StyleSheet } from 'react-native';
 import { THEME } from '../../theme';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
   container: {
@@ -70,9 +70,6 @@ export const styles = StyleSheet.create({
     color: THEME.colors.base.gray_400,
     marginTop: 36,
     marginBottom: 12
-  },
-  coffeList: {
-    flex: 1,
   },
   contentCoffeList: {
     gap: 12
