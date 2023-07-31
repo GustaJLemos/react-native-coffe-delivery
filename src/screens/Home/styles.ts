@@ -62,7 +62,8 @@ export const styles = StyleSheet.create({
   },
   filterContainer: {
     flexDirection: 'row',
-    gap: 8
+    gap: 8,
+    marginBottom: 12
   },
   coffeListTitle: {
     fontFamily: THEME.font_family.baloo.bold,

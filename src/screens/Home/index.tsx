@@ -94,15 +94,15 @@ export function Home() {
     return ({
       opacity: interpolate(scrollY.value, [0, 200, 300, 400, 500], [1, 0.8, 0.4, 0.2, 0], Extrapolate.CLAMP),
       transform: [
-        { translateY: interpolate(scrollY.value, [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500], [0, -20, -40, -60, -80, -100, -120, -140, 160, -180, -180], Extrapolate.CLAMP) }
-      ]
+        { translateY: interpolate(scrollY.value, [0, 100, 200, 300, 400, 500, 600, 700], [0, -40, -80, -120, -160, -180, -220, -260], Extrapolate.CLAMP) }
+      ],
     })
   })
 
   const lala = useAnimatedStyle(() => {
     return ({
       transform: [
-        { translateY: interpolate(scrollY.value, [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550], [0, -20, -40, -60, -80, -100, -120, -140, 160, -180, -180, -height], Extrapolate.CLAMP) }
+        { translateY: interpolate(scrollY.value, [0, 100, 200, 300, 400, 500, 600, 700], [0, -40, -80, -120, -160, -180, -220, (-height + 340)], Extrapolate.CLAMP) }
       ]
     })
   })
@@ -151,10 +151,25 @@ export function Home() {
     }
   })
 
+  // dar uma olhada pq essa animação aq tá bugando
+  // TODO se pá se eu usar a parada de gesto aq isso resolve, ai habilito o scroll dps de uma certa hr da tela
+  // TODO basicamente boyo o identificador de gestos aq, e "puxo" ele até la emcima, a aprtir de uma posição definida eu "travo" o usuário, e habilito o scroll
   const coffeListScrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       console.log('event.contentOffset.y', event.contentOffset.y)
-      if (scrollY.value > 550) {
+      if (scrollY.value < 500) {
+        'worklet'
+        runOnJS(setFilterSelected)('tradicionais')
+      }
+      if (scrollY.value > 460) {
+        'worklet'
+        runOnJS(setFilterSelected)('doces')
+      }
+      if (scrollY.value > 780) {
+        'worklet'
+        runOnJS(setFilterSelected)('especiais')
+      }
+      if (scrollY.value > 800) {
         return;
       }
       scrollY.value = event.contentOffset.y
@@ -168,16 +183,19 @@ export function Home() {
       // showsVerticalScrollIndicator={false}
       // onScroll={coffeListScrollHandler}
       >
+        {/* mudar a cor do texto dps de certa posição apra o preto */}
         <Header />
+
         <Animated.View style={[styles.background, onScrollAnimation]} entering={SlideInUp.easing(Easing.linear).duration(1000)} />
 
-        <Animated.View entering={FadeIn.delay(1000)}>
+        <Animated.View style={onScrollAnimation}>
 
-          {/* <Animated.View style={fixedHeaderStyles}>
+          <Animated.View entering={FadeIn.delay(1000)}>
+
+            {/* <Animated.View style={fixedHeaderStyles}>
             <Header />
           </Animated.View> */}
 
-          <Animated.View style={onScrollAnimation}>
             {/* TODO colocar imagem de café aq no backfround */}
             <Text style={styles.title}>
               Encontre o café perfeito para qualquer hora do dia
@@ -197,52 +215,55 @@ export function Home() {
               style={styles.coffeBean}
             />
           </Animated.View>
+
+          <Animated.ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.principalCoffes}
+            contentContainerStyle={styles.principalCoffesContent}
+            entering={SlideInRight.delay(1500).duration(500)}
+            onScroll={scrollHandler}
+            pagingEnabled
+            snapToInterval={SCROLLVIEW_CARD_SIZE}
+            decelerationRate={0}
+            scrollEventThrottle={16}
+          >
+            {principalCoffes?.map((item, index) => {
+              const itemsRange = [
+                (index - 1) * SCROLLVIEW_CARD_SIZE, // previous item
+                index * SCROLLVIEW_CARD_SIZE, // current item
+                (index + 1) * SCROLLVIEW_CARD_SIZE, // next item
+              ]
+
+              const principalCoffeAnimation = useAnimatedStyle(() => {
+                return ({
+                  transform: [
+                    { scale: interpolate(scrollX.value, itemsRange, [0.8, 1, 0.8], Extrapolate.CLAMP) }
+                  ]
+                });
+              })
+
+              return (
+                <TouchabledAnimated
+                  key={item.id}
+                  style={principalCoffeAnimation}
+                >
+                  <CoffePrincipalCard
+                    onPress={() => handleNavigateToCoffeDetails(item)}
+                    coffe={item}
+                  />
+                </TouchabledAnimated>
+              )
+            })}
+          </Animated.ScrollView>
+
         </Animated.View>
 
-        <Animated.ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={[styles.principalCoffes, onScrollAnimation]}
-          contentContainerStyle={styles.principalCoffesContent}
-          entering={SlideInRight.delay(1500).duration(500)}
-          onScroll={scrollHandler}
-          pagingEnabled
-          snapToInterval={SCROLLVIEW_CARD_SIZE}
-          decelerationRate={0}
-          scrollEventThrottle={16}
-        >
-          {principalCoffes?.map((item, index) => {
-            const itemsRange = [
-              (index - 1) * SCROLLVIEW_CARD_SIZE, // previous item
-              index * SCROLLVIEW_CARD_SIZE, // current item
-              (index + 1) * SCROLLVIEW_CARD_SIZE, // next item
-            ]
-
-            const principalCoffeAnimation = useAnimatedStyle(() => {
-              return ({
-                transform: [
-                  { scale: interpolate(scrollX.value, itemsRange, [0.8, 1, 0.8], Extrapolate.CLAMP) }
-                ]
-              });
-            })
-
-            return (
-              <TouchabledAnimated
-                key={item.id}
-                style={principalCoffeAnimation}
-              >
-                <CoffePrincipalCard
-                  onPress={() => handleNavigateToCoffeDetails(item)}
-                  coffe={item}
-                />
-              </TouchabledAnimated>
-            )
-          })}
-        </Animated.ScrollView>
-
-
+        {/* fazer um "onLongPress" pra puxar esse nossos cafés aq debaixo, 
+        e n deixar o scrooll View habilitado por padrão, só fazer o gesto mesmo */}
 
         <Animated.View style={lala} entering={SlideInDown.delay(1500).duration(800)}>
+          {/* tenho q fazer a animação de  */}
           <Text style={styles.filterTitle}>
             Nossos cafés
           </Text>
