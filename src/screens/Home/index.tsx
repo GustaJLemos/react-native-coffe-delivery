@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Text, TextInput, View, ScrollView, Dimensions, TouchableOpacity, SectionList } from 'react-native';
+import { Text, TextInput, View, ScrollView, Dimensions, TouchableOpacity, SectionList, FlatList } from 'react-native';
 import { MagnifyingGlass } from 'phosphor-react-native';
 import { styles } from './styles';
 import { Header } from '../../components/Header';
@@ -7,7 +7,7 @@ import { THEME } from '../../theme';
 import { CoffePrincipalCard } from '../../components/CoffePrincipalCard';
 import { Filter } from '../../components/Filter';
 import { CoffeCard } from '../../components/CoffeCard';
-import { coffeFilterType, principalCoffes, specialtyCoffees, sweetCoffees, traditionalCoffees } from '../../mocks/coffes';
+import { coffeFilterType, principalCoffes, sectionedListCoffes, specialtyCoffees, sweetCoffees, traditionalCoffees } from '../../mocks/coffes';
 import { CoffeType } from '../../types/CoffeType';
 import { useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationProps';
@@ -18,6 +18,7 @@ import Animated, { Keyframe, interpolate, useAnimatedStyle, useSharedValue, with
 import CoffeBeanSvg from '../../assets/coffes/CoffeBean.svg'
 
 const TouchabledAnimated = Animated.createAnimatedComponent(TouchableOpacity);
+const SectionListAnimated = Animated.createAnimatedComponent(SectionList);
 
 const { height } = Dimensions.get('window');
 
@@ -27,10 +28,22 @@ const COFFE_PRINCIPAL_GAP = 16
 
 const SCROLLVIEW_CARD_SIZE = COFFE_PRINCIPAL_CARD_WIDTH - COFFE_PRINCIPAL_GAP;
 
+const COFFE_CARD_HEIGHT = 120
+
+const COFFE_CARD_LIST_TITLE = 48
+
+const COFFE_CARD_LIST_GAP = 12
+
+const SECTION_LIST_HEIGHT = sectionedListCoffes.length * (COFFE_CARD_HEIGHT + COFFE_CARD_LIST_GAP + COFFE_CARD_LIST_TITLE)
+
+const HEIGHT_HEADER = 300;
+
 export function Home() {
   const [filterSelected, setFilterSelected] = useState<CoffeType | null>(null);
 
-  const scrollRef = useRef<Animated.ScrollView>(null);
+  const scrollRef = useRef<SectionList>(null);
+
+  const coffeListTitleFilterRef = useRef<{ yPosition: number }[]>(null);
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
@@ -47,6 +60,27 @@ export function Home() {
     navigation.navigate('CoffeDetailsScreen');
   }
 
+  function handleSelectFilter(filter: CoffeType) {
+    console.log('asdklaskdjasdk')
+    setFilterSelected(filter);
+
+    console.log('coffeListTitleFilterRef.current[0].yPosition', coffeListTitleFilterRef)
+
+    switch (filter) {
+      case 'tradicionais':
+        scrollRef.current.scrollToLocation({ itemIndex: 0, sectionIndex: 0 })
+        break;
+      case 'doces':
+        scrollRef.current?.scrollToLocation({ itemIndex: 1, sectionIndex: 1 })
+        break;
+      case 'especiais':
+        scrollRef.current?.scrollToLocation({ itemIndex: 2, sectionIndex: 2 })
+        break;
+      default:
+        break;
+    }
+  }
+
   const coffeAddedAnimation = useAnimatedStyle(() => {
     return ({
       opacity: coffeAddedOpacity.value,
@@ -58,9 +92,17 @@ export function Home() {
 
   const onScrollAnimation = useAnimatedStyle(() => {
     return ({
-      opacity: interpolate(scrollY.value, [0, 100, 200], [1, 0.8, 0.6]),
+      opacity: interpolate(scrollY.value, [0, 200, 300, 400, 500], [1, 0.8, 0.4, 0.2, 0], Extrapolate.CLAMP),
       transform: [
-        { translateY: interpolate(scrollY.value, [0, 50, 100, 150, 200, 250], [0, -15, -30, -45, -60, -75]) }
+        { translateY: interpolate(scrollY.value, [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500], [0, -20, -40, -60, -80, -100, -120, -140, 160, -180, -180], Extrapolate.CLAMP) }
+      ]
+    })
+  })
+
+  const lala = useAnimatedStyle(() => {
+    return ({
+      transform: [
+        { translateY: interpolate(scrollY.value, [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550], [0, -20, -40, -60, -80, -100, -120, -140, 160, -180, -180, -height], Extrapolate.CLAMP) }
       ]
     })
   })
@@ -68,7 +110,7 @@ export function Home() {
   const headerAnimation = useAnimatedStyle(() => {
     return ({
       transform: [
-        { translateY: interpolate(scrollY.value, [0, 50, 100, 150, 200, 250], [0, 0, 0, 0, 0, 0, 0, 0]) }
+        { translateY: interpolate(scrollY.value, [0, 50, 100, 150, 200, 250], [0, 0, 0, 0, 0, 0, 0, 0], Extrapolate.CLAMP) }
       ],
       backgroundColor: interpolateColor(scrollY.value, [200, 250], [THEME.colors.base.gray_100, THEME.colors.base.gray_900]),
       position: scrollY.value > 200 ? 'absolute' : 'relative',
@@ -76,13 +118,22 @@ export function Home() {
     })
   })
 
-  const teste = useAnimatedStyle(() => {
-    return ({
-      // opacity: interpolate(scrollY.value, [0, 100, 200], [1, 0.8, 0.6]),
-      height: interpolate(scrollY.value, [0, 100, 200], [400, 600, 800]),
-      flex: 1,
-    })
-  })
+  const fixedHeaderStyles = useAnimatedStyle(() => {
+    return {
+      position: 'absolute',
+      zIndex: 1,
+      // flex: 1,
+      width: '110%',
+      left: '-5%',
+      paddingTop: 50,
+      // paddingVertical: 40,
+      backgroundColor: THEME.colors.base.gray_900,
+      opacity: interpolate(scrollY.value, [250, 300], [0, 1], Extrapolate.CLAMP),
+      transform: [
+        { translateY: interpolate(scrollY.value, [250, 300], [-40, HEIGHT_HEADER], Extrapolate.CLAMP) }
+      ]
+    }
+  });
 
   // TODO tenq fazer essa animação certo
   useEffect(() => {
@@ -103,25 +154,28 @@ export function Home() {
   const coffeListScrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       console.log('event.contentOffset.y', event.contentOffset.y)
+      if (scrollY.value > 550) {
+        return;
+      }
       scrollY.value = event.contentOffset.y
     }
   })
 
   return (
     <>
-      <Animated.ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-        onScroll={coffeListScrollHandler}
-      // StickyHeaderComponent={() => }
-      // stickyHeaderIndices={[]}
+      <View
+        style={styles.container}
+      // showsVerticalScrollIndicator={false}
+      // onScroll={coffeListScrollHandler}
       >
+        <Header />
         <Animated.View style={[styles.background, onScrollAnimation]} entering={SlideInUp.easing(Easing.linear).duration(1000)} />
 
         <Animated.View entering={FadeIn.delay(1000)}>
-          {/* <Animated.View style={headerAnimation}> */}
-          <Header />
-          {/* </Animated.View> */}
+
+          {/* <Animated.View style={fixedHeaderStyles}>
+            <Header />
+          </Animated.View> */}
 
           <Animated.View style={onScrollAnimation}>
             {/* TODO colocar imagem de café aq no backfround */}
@@ -186,13 +240,9 @@ export function Home() {
           })}
         </Animated.ScrollView>
 
-        <Animated.ScrollView
-          ref={scrollRef}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.contentCoffeList}
-          entering={SlideInDown.delay(1500).duration(800)}
-        >
-          {/* filtros do café */}
+
+
+        <Animated.View style={lala} entering={SlideInDown.delay(1500).duration(800)}>
           <Text style={styles.filterTitle}>
             Nossos cafés
           </Text>
@@ -202,52 +252,37 @@ export function Home() {
                 key={item}
                 filter={item}
                 selected={filterSelected === item}
-                onSelect={(item) => {
-                  setFilterSelected(item),
-                    scrollRef.current?.scrollTo({ y: 600 })
-                }}
+                onSelect={(item) => handleSelectFilter(item)}
               />
             ))}
           </View>
 
-          {/* TODO mudar pra uma listagem só sera? */}
-          {/* listagem dos cafés tradicionais */}
-          <Text style={styles.coffeListTitle}>
-            tradicionais
-          </Text>
-          {traditionalCoffees.map((item) => (
-            <CoffeCard
-              key={item.id}
-              coffe={item}
-              onPress={() => handleNavigateToCoffeDetails(item)}
-            />
-          ))}
+          <SectionListAnimated
+            ref={scrollRef}
+            onScroll={coffeListScrollHandler}
+            sections={sectionedListCoffes}
+            showsVerticalScrollIndicator={false}
+            style={{ height: SECTION_LIST_HEIGHT, flexGrow: 1 }}
+            contentContainerStyle={styles.contentCoffeList}
+            keyExtractor={(item, index) => item.id + index}
+            renderItem={({ item }) => (
+              <CoffeCard
+                key={item.id}
+                coffe={item}
+                onPress={() => handleNavigateToCoffeDetails(item)}
+              />
+            )}
+            renderSectionHeader={({ section }) => (
+              <Text
+                style={styles.coffeListTitle}
+              >
+                {section.title}
+              </Text>
+            )}
+          />
+        </Animated.View>
 
-          {/* listagem dos cafés doces */}
-          <Text style={styles.coffeListTitle}>
-            Doces
-          </Text>
-          {sweetCoffees.map((item) => (
-            <CoffeCard
-              key={item.id}
-              coffe={item}
-              onPress={() => handleNavigateToCoffeDetails(item)}
-            />
-          ))}
-
-          {/* listagem dos cafés especiais */}
-          <Text style={styles.coffeListTitle}>
-            Especiais
-          </Text>
-          {specialtyCoffees.map((item) => (
-            <CoffeCard
-              key={item.id}
-              coffe={item}
-              onPress={() => handleNavigateToCoffeDetails(item)}
-            />
-          ))}
-        </Animated.ScrollView>
-      </Animated.ScrollView>
+      </View >
       <CoffeAddedToast
         style={coffeAddedAnimation}
       />

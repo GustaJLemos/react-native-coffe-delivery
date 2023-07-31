@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
   },
   background: {
     width: width,
-    height: '15%',
+    height: '35%',
     backgroundColor: THEME.colors.base.gray_100,
     position: 'absolute'
   },
@@ -68,10 +68,11 @@ export const styles = StyleSheet.create({
     fontFamily: THEME.font_family.baloo.bold,
     fontSize: THEME.font_size.baloo.title_xs,
     color: THEME.colors.base.gray_400,
-    marginTop: 36,
-    marginBottom: 12
+    marginTop: 12,
   },
   contentCoffeList: {
+    // height: 3000,
+    flexGrow: 1,
     gap: 12
   }
 });
