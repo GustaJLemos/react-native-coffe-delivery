@@ -14,9 +14,15 @@ import ArabeSvg from '../assets/coffes/Árabe.svg'
 import IrlandesSvg from '../assets/coffes/Irlandês.svg'
 import { CoffeSize } from '../types/CoffeSize';
 
+type sectionedListProps = {
+  title: string;
+  data: Coffes[],
+}
+
 export const coffeFilterType: CoffeType[] = [
   'tradicionais', 'doces', 'especiais'
 ]
+
 
 export const traditionalCoffees: Coffes[] = [
   {
@@ -127,6 +133,21 @@ export const principalCoffes: Coffes[] = [
   traditionalCoffees[3],
   sweetCoffees[0],
   specialtyCoffees[0],
+]
+
+export const sectionedListCoffes: sectionedListProps[] = [
+  {
+    title: 'Tradicionais',
+    data: traditionalCoffees
+  },
+  {
+    title: 'Doces',
+    data: sweetCoffees
+  },
+  {
+    title: 'Especiais',
+    data: specialtyCoffees
+  }
 ]
 
 export const coffeSizesOptions: CoffeSize[] = [
