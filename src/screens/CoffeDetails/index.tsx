@@ -14,7 +14,8 @@ import { useCartStore } from '../../store/cartStore';
 import { CoffeSize } from '../../types/CoffeSize';
 import { CoffeAddedToCart } from '../../types/CoffeAddedToCart';
 import { THEME } from '../../theme';
-import Animated, { Easing, Layout, SlideInLeft, SlideInRight, SlideOutRight, interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
+import Animated, { BounceIn, Easing, Layout, SlideInLeft, SlideInRight, SlideOutRight, interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
+import { notificationAsync, NotificationFeedbackType } from 'expo-haptics';
 
 export function CoffeDetails() {
   const [coffeSizeSelected, setCoffeSizeSelected] = useState<CoffeSize | null>(null);
@@ -26,6 +27,7 @@ export function CoffeDetails() {
   const coffeSelected = cartStore.coffeSelected;
 
   const sizeRequired = useSharedValue(0);
+  const sizeSelected = useSharedValue(1);
 
   function handleAddCoffeToCart() {
     let alreadyAddedToTheList = cartStore.coffeAddedToCart.find((item) => item.id === coffeSelected.id && item.size === coffeSizeSelected)
@@ -47,6 +49,24 @@ export function CoffeDetails() {
     navigation.goBack()
   }
 
+  function handleSelectSize(size: CoffeSize) {
+    setCoffeSizeSelected(size);
+
+    switch (size) {
+      case '114ml':
+        sizeSelected.value = withSpring(1)
+        break;
+      case '140ml':
+        sizeSelected.value = withSpring(1.3)
+        break;
+      case '227ml':
+        sizeSelected.value = withSpring(1.6)
+        break;
+      default:
+        break;
+    }
+  }
+
   const sizeRequiredTextAnimation = useAnimatedStyle(() => {
     return ({
       color: interpolateColor(
@@ -59,12 +79,9 @@ export function CoffeDetails() {
 
   const coffeImageAnimation = useAnimatedStyle(() => {
     return ({
-      width: sizeRequired.value * 1,
-      height: sizeRequired.value * 1,
-      flex: 1,
-      position: 'absolute',
+      width: sizeSelected.value * 200,
+      height: sizeSelected.value * 200,
       bottom: -60,
-      alignSelf: 'center'
     });
   });
 
@@ -72,8 +89,8 @@ export function CoffeDetails() {
   // TODO caralho seria muito massa fazer uma animação de quando o cara selecionar o tamanho a imagem do coffe aumeenta ou diminui
 
   function onPress() {
-    console.log('to aq?')
     sizeRequired.value = withSequence(withTiming(1), withTiming(0))
+    notificationAsync(NotificationFeedbackType.Error)
   }
 
 
@@ -108,12 +125,13 @@ export function CoffeDetails() {
           </Text>
         </View>
 
-        <Animated.View style={coffeImageAnimation}>
-          <Image
+        <View style={styles.coffeImageContainer}>
+          <Animated.Image
             source={CoffePng}
+            entering={BounceIn.duration(200)}
             style={coffeImageAnimation}
           />
-        </Animated.View>
+        </View>
       </View>
       <View style={styles.bottomContainer}>
         <Animated.Text style={[styles.sizeText, sizeRequiredTextAnimation]}>
@@ -125,7 +143,7 @@ export function CoffeDetails() {
               key={item}
               text={item}
               selected={coffeSizeSelected === item}
-              onSelect={setCoffeSizeSelected}
+              onSelect={(item) => handleSelectSize(item)}
               animationValue={sizeRequired}
             />
           ))}
