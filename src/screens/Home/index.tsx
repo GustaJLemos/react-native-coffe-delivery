@@ -16,6 +16,7 @@ import { useCartStore } from '../../store/cartStore';
 import { CoffeAddedToast } from '../../components/CoffeAddedToast';
 import Animated, { Keyframe, interpolate, useAnimatedStyle, useSharedValue, withSequence, withTiming, Easing, FadeIn, SlideInDown, SlideInUp, SlideInRight, useAnimatedScrollHandler, Extrapolate, runOnJS, interpolateColor } from 'react-native-reanimated';
 import CoffeBeanSvg from '../../assets/coffes/CoffeBean.svg'
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 
 const TouchabledAnimated = Animated.createAnimatedComponent(TouchableOpacity);
 const SectionListAnimated = Animated.createAnimatedComponent(SectionList);
@@ -54,6 +55,7 @@ export function Home() {
   const coffedAddedTranslateY = useSharedValue(0);
   const scrollX = useSharedValue(0);
   const scrollY = useSharedValue(0);
+  const coffeListPosition = useSharedValue(0);
 
   function handleNavigateToCoffeDetails(coffeSelected: Coffes) {
     setCoffeSelected(coffeSelected);
@@ -90,11 +92,20 @@ export function Home() {
     });
   })
 
-  const onScrollAnimation = useAnimatedStyle(() => {
+  // const onScrollAnimation = useAnimatedStyle(() => {
+  //   return ({
+  //     opacity: interpolate(scrollY.value, [0, 200, 300, 400, 500], [1, 0.8, 0.4, 0.2, 0], Extrapolate.CLAMP),
+  //     transform: [
+  //       { translateY: interpolate(scrollY.value, [0, 100, 200, 300, 400, 500, 600, 700], [0, -40, -80, -120, -160, -180, -220, -260], Extrapolate.CLAMP) }
+  //     ],
+  //   })
+  // })
+
+  const onPanAnimation = useAnimatedStyle(() => {
     return ({
-      opacity: interpolate(scrollY.value, [0, 200, 300, 400, 500], [1, 0.8, 0.4, 0.2, 0], Extrapolate.CLAMP),
+      // opacity: interpolate(coffeListPosition.value, [0, -200, -300, -400, -500], [1, 0.8, 0.4, 0.2, 0], Extrapolate.CLAMP),
       transform: [
-        { translateY: interpolate(scrollY.value, [0, 100, 200, 300, 400, 500, 600, 700], [0, -40, -80, -120, -160, -180, -220, -260], Extrapolate.CLAMP) }
+        { translateY: coffeListPosition.value }
       ],
     })
   })
@@ -102,7 +113,7 @@ export function Home() {
   const lala = useAnimatedStyle(() => {
     return ({
       transform: [
-        { translateY: interpolate(scrollY.value, [0, 100, 200, 300, 400, 500, 600, 700], [0, -40, -80, -120, -160, -180, -220, (-height + 340)], Extrapolate.CLAMP) }
+        { translateY: coffeListPosition.value }
       ]
     })
   })
@@ -176,6 +187,22 @@ export function Home() {
     }
   })
 
+  const onPan = Gesture.Pan().onUpdate((event) => {
+    console.log('height * -1', ((height * -1) + 60))
+    const onMove = event.translationY < 0 && event.translationY > (-440);
+    // no onEnd, eu verifico a posição de onde ele está, e de acordo com isso, eu transfiro ele para a posição inicial (0), ou coloco ele pra cima de uma vez
+    if (onMove) {
+      coffeListPosition.value = event.translationY
+    }
+    console.log('lalellele la em casa', event.translationY)
+  }).onEnd((event) => {
+    if (event.translationY < (-350)) {
+      coffeListPosition.value = 0
+    }
+
+    console.log('event', event)
+  })
+
   return (
     <>
       <View
@@ -186,9 +213,9 @@ export function Home() {
         {/* mudar a cor do texto dps de certa posição apra o preto */}
         <Header />
 
-        <Animated.View style={[styles.background, onScrollAnimation]} entering={SlideInUp.easing(Easing.linear).duration(1000)} />
+        <Animated.View style={[styles.background, onPanAnimation]} entering={SlideInUp.easing(Easing.linear).duration(1000)} />
 
-        <Animated.View style={onScrollAnimation}>
+        <Animated.View style={onPanAnimation}>
 
           <Animated.View entering={FadeIn.delay(1000)}>
 
@@ -262,21 +289,27 @@ export function Home() {
         {/* fazer um "onLongPress" pra puxar esse nossos cafés aq debaixo, 
         e n deixar o scrooll View habilitado por padrão, só fazer o gesto mesmo */}
 
-        <Animated.View style={lala} entering={SlideInDown.delay(1500).duration(800)}>
+
+
+        <Animated.View entering={SlideInDown.delay(1500).duration(800)}>
           {/* tenho q fazer a animação de  */}
-          <Text style={styles.filterTitle}>
-            Nossos cafés
-          </Text>
-          <View style={styles.filterContainer}>
-            {coffeFilterType.map((item) => (
-              <Filter
-                key={item}
-                filter={item}
-                selected={filterSelected === item}
-                onSelect={(item) => handleSelectFilter(item)}
-              />
-            ))}
-          </View>
+          <GestureDetector gesture={onPan}>
+            <Animated.View style={lala}>
+              <Text style={styles.filterTitle}>
+                Nossos cafés
+              </Text>
+              <View style={styles.filterContainer}>
+                {coffeFilterType.map((item) => (
+                  <Filter
+                    key={item}
+                    filter={item}
+                    selected={filterSelected === item}
+                    onSelect={(item) => handleSelectFilter(item)}
+                  />
+                ))}
+              </View>
+            </Animated.View>
+          </GestureDetector>
 
           <SectionListAnimated
             ref={scrollRef}
