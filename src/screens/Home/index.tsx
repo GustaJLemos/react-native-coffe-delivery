@@ -103,7 +103,7 @@ export function Home() {
 
   const onPanAnimation = useAnimatedStyle(() => {
     return ({
-      // opacity: interpolate(coffeListPosition.value, [0, -200, -300, -400, -500], [1, 0.8, 0.4, 0.2, 0], Extrapolate.CLAMP),
+      opacity: interpolate((coffeListPosition.value * -1), [0, 100, 200, 300, 400, 410], [1, 0.9, 0.8, 0.7, 0.6, 0], Extrapolate.CLAMP),
       transform: [
         { translateY: coffeListPosition.value }
       ],
@@ -115,6 +115,12 @@ export function Home() {
       transform: [
         { translateY: coffeListPosition.value }
       ]
+    })
+  })
+
+  const textColorStyles = useAnimatedStyle(() => {
+    return ({
+      color: interpolateColor(coffeListPosition.value, [0, -335], [THEME.colors.base.gray_200, THEME.colors.base.gray_900])
     })
   })
 
@@ -187,17 +193,18 @@ export function Home() {
     }
   })
 
-  const onPan = Gesture.Pan().onUpdate((event) => {
-    console.log('height * -1', ((height * -1) + 60))
+  const onPan = Gesture.Pan().onChange((event) => {
     const onMove = event.translationY < 0 && event.translationY > (-440);
     // no onEnd, eu verifico a posição de onde ele está, e de acordo com isso, eu transfiro ele para a posição inicial (0), ou coloco ele pra cima de uma vez
     if (onMove) {
       coffeListPosition.value = event.translationY
     }
-    console.log('lalellele la em casa', event.translationY)
   }).onEnd((event) => {
-    if (event.translationY < (-350)) {
-      coffeListPosition.value = 0
+    console.log('lalellele la em casa', event.translationY)
+    if (event.translationY > (-300)) {
+      coffeListPosition.value = withTiming(-0)
+    } else {
+      coffeListPosition.value = withTiming(-440)
     }
 
     console.log('event', event)
@@ -211,6 +218,9 @@ export function Home() {
       // onScroll={coffeListScrollHandler}
       >
         {/* mudar a cor do texto dps de certa posição apra o preto */}
+        {/* TODO ver uma forma de passar a cor aq e mudar quando tiver a animação */}
+        {/* TODO tenq ver a animação do toast lá embaixo */}
+        {/* TODO fazer animação de quando clicar navegar lá pra baixo, além disso mover todo o negócio lá pra cima, quando eu tiver gfazendo o pan pra cima, eu tbm já mudo o filtro selecionado para o primeiro */}
         <Header />
 
         <Animated.View style={[styles.background, onPanAnimation]} entering={SlideInUp.easing(Easing.linear).duration(1000)} />
@@ -308,32 +318,33 @@ export function Home() {
                   />
                 ))}
               </View>
+
+
+              <SectionListAnimated
+                ref={scrollRef}
+                onScroll={coffeListScrollHandler}
+                sections={sectionedListCoffes}
+                showsVerticalScrollIndicator={false}
+                style={{ height: SECTION_LIST_HEIGHT, flexGrow: 1 }}
+                contentContainerStyle={styles.contentCoffeList}
+                keyExtractor={(item, index) => item.id + index}
+                renderItem={({ item }) => (
+                  <CoffeCard
+                    key={item.id}
+                    coffe={item}
+                    onPress={() => handleNavigateToCoffeDetails(item)}
+                  />
+                )}
+                renderSectionHeader={({ section }) => (
+                  <Text
+                    style={styles.coffeListTitle}
+                  >
+                    {section.title}
+                  </Text>
+                )}
+              />
             </Animated.View>
           </GestureDetector>
-
-          <SectionListAnimated
-            ref={scrollRef}
-            onScroll={coffeListScrollHandler}
-            sections={sectionedListCoffes}
-            showsVerticalScrollIndicator={false}
-            style={{ height: SECTION_LIST_HEIGHT, flexGrow: 1 }}
-            contentContainerStyle={styles.contentCoffeList}
-            keyExtractor={(item, index) => item.id + index}
-            renderItem={({ item }) => (
-              <CoffeCard
-                key={item.id}
-                coffe={item}
-                onPress={() => handleNavigateToCoffeDetails(item)}
-              />
-            )}
-            renderSectionHeader={({ section }) => (
-              <Text
-                style={styles.coffeListTitle}
-              >
-                {section.title}
-              </Text>
-            )}
-          />
         </Animated.View>
 
       </View >
