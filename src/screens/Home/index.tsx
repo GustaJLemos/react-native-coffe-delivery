@@ -41,6 +41,7 @@ const HEIGHT_HEADER = 300;
 
 export function Home() {
   const [filterSelected, setFilterSelected] = useState<CoffeType | null>(null);
+  const [lalalele, setlala] = useState(true);
 
   const scrollRef = useRef<SectionList>(null);
 
@@ -193,11 +194,13 @@ export function Home() {
     }
   })
 
-  const onPan = Gesture.Pan().onChange((event) => {
+  const onPan = Gesture.Pan().onUpdate((event) => {
     const onMove = event.translationY < 0 && event.translationY > (-440);
     // no onEnd, eu verifico a posição de onde ele está, e de acordo com isso, eu transfiro ele para a posição inicial (0), ou coloco ele pra cima de uma vez
     if (onMove) {
       coffeListPosition.value = event.translationY
+    } else {
+      coffeListPosition.value = coffeListPosition.value
     }
   }).onEnd((event) => {
     console.log('lalellele la em casa', event.translationY)
@@ -205,6 +208,9 @@ export function Home() {
       coffeListPosition.value = withTiming(-0)
     } else {
       coffeListPosition.value = withTiming(-440)
+
+      'worklet'
+      runOnJS(setlala)(false)
     }
 
     console.log('event', event)
@@ -299,7 +305,8 @@ export function Home() {
         {/* fazer um "onLongPress" pra puxar esse nossos cafés aq debaixo, 
         e n deixar o scrooll View habilitado por padrão, só fazer o gesto mesmo */}
 
-
+        {/* TODO talvez substitui tudo esse cucu aq?
+        por uma scrollView? */}
 
         <Animated.View entering={SlideInDown.delay(1500).duration(800)}>
           {/* tenho q fazer a animação de  */}
@@ -321,31 +328,68 @@ export function Home() {
             </Animated.View>
           </GestureDetector>
           <Animated.View style={lala}>
-            <SectionListAnimated
-              ref={scrollRef}
-              onScroll={coffeListScrollHandler}
-              scrollEnabled={!(coffeListPosition.value < 0 && coffeListPosition.value > (-440))}
-              sections={sectionedListCoffes}
-              showsVerticalScrollIndicator={false}
-              style={{ height: SECTION_LIST_HEIGHT, flexGrow: 1, backgroundColor: 'blue' }}
-              contentContainerStyle={styles.contentCoffeList}
-
-              keyExtractor={(item, index) => item.id + index}
-              renderItem={({ item }) => (
-                <CoffeCard
-                  key={item.id}
-                  coffe={item}
-                  onPress={() => handleNavigateToCoffeDetails(item)}
-                />
-              )}
-              renderSectionHeader={({ section }) => (
-                <Text
-                  style={styles.coffeListTitle}
-                >
-                  {section.title}
-                </Text>
-              )}
-            />
+            {
+              lalalele ? (
+                principalCoffes.map((item) => (
+                  <CoffeCard
+                    key={item.id}
+                    coffe={item}
+                    onPress={() => handleNavigateToCoffeDetails(item)}
+                  />
+                ))
+              ) : (
+                // <SectionListAnimated
+                //   ref={scrollRef}
+                //   onScroll={coffeListScrollHandler}
+                //   // scrollEnabled={!(coffeListPosition.value > (-440))}
+                //   sections={sectionedListCoffes}
+                //   hitSlop={{ top: 400 }}
+                //   showsVerticalScrollIndicator={false}
+                //   style={{ flexGrow: 1 }}
+                //   scrollEnabled={true}
+                //   contentContainerStyle={styles.contentCoffeList}
+                //   keyExtractor={(item, index) => item.id + index}
+                //   renderItem={({ item }) => (
+                //     <CoffeCard
+                //       key={item.id}
+                //       coffe={item}
+                //       onPress={() => handleNavigateToCoffeDetails(item)}
+                //     />
+                //   )}
+                //   renderSectionHeader={({ section }) => (
+                //     <Text
+                //       style={styles.coffeListTitle}
+                //     >
+                //       {section.title}
+                //     </Text>
+                //   )}
+                // />
+                // TODO talvez realmente terei q usar a scrollView envolta de tudo
+                <ScrollView>
+                  {traditionalCoffees.map((item) => (
+                    <CoffeCard
+                      key={item.id}
+                      coffe={item}
+                      onPress={() => handleNavigateToCoffeDetails(item)}
+                    />
+                  ))}
+                  {sweetCoffees.map((item) => (
+                    <CoffeCard
+                      key={item.id}
+                      coffe={item}
+                      onPress={() => handleNavigateToCoffeDetails(item)}
+                    />
+                  ))}
+                  {specialtyCoffees.map((item) => (
+                    <CoffeCard
+                      key={item.id}
+                      coffe={item}
+                      onPress={() => handleNavigateToCoffeDetails(item)}
+                    />
+                  ))}
+                </ScrollView>
+              )
+            }
           </Animated.View>
         </Animated.View>
 
