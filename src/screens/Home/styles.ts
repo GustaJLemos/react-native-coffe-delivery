@@ -73,6 +73,7 @@ export const styles = StyleSheet.create({
   },
   contentCoffeList: {
     // height: 3000,
+    backgroundColor: 'red',
     flexGrow: 1,
     gap: 12
   }

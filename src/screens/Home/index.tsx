@@ -318,33 +318,35 @@ export function Home() {
                   />
                 ))}
               </View>
-
-
-              <SectionListAnimated
-                ref={scrollRef}
-                onScroll={coffeListScrollHandler}
-                sections={sectionedListCoffes}
-                showsVerticalScrollIndicator={false}
-                style={{ height: SECTION_LIST_HEIGHT, flexGrow: 1 }}
-                contentContainerStyle={styles.contentCoffeList}
-                keyExtractor={(item, index) => item.id + index}
-                renderItem={({ item }) => (
-                  <CoffeCard
-                    key={item.id}
-                    coffe={item}
-                    onPress={() => handleNavigateToCoffeDetails(item)}
-                  />
-                )}
-                renderSectionHeader={({ section }) => (
-                  <Text
-                    style={styles.coffeListTitle}
-                  >
-                    {section.title}
-                  </Text>
-                )}
-              />
             </Animated.View>
           </GestureDetector>
+          <Animated.View style={lala}>
+            <SectionListAnimated
+              ref={scrollRef}
+              onScroll={coffeListScrollHandler}
+              scrollEnabled={!(coffeListPosition.value < 0 && coffeListPosition.value > (-440))}
+              sections={sectionedListCoffes}
+              showsVerticalScrollIndicator={false}
+              style={{ height: SECTION_LIST_HEIGHT, flexGrow: 1, backgroundColor: 'blue' }}
+              contentContainerStyle={styles.contentCoffeList}
+
+              keyExtractor={(item, index) => item.id + index}
+              renderItem={({ item }) => (
+                <CoffeCard
+                  key={item.id}
+                  coffe={item}
+                  onPress={() => handleNavigateToCoffeDetails(item)}
+                />
+              )}
+              renderSectionHeader={({ section }) => (
+                <Text
+                  style={styles.coffeListTitle}
+                >
+                  {section.title}
+                </Text>
+              )}
+            />
+          </Animated.View>
         </Animated.View>
 
       </View >
