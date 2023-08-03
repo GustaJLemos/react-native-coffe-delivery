@@ -17,7 +17,6 @@ export const styles = StyleSheet.create({
   text: {
     fontFamily: THEME.font_family.roboto.regular,
     fontSize: THEME.font_size.roboto.text_sm,
-    color: THEME.colors.base.gray_900,
     marginLeft: 4
   },
   title: {

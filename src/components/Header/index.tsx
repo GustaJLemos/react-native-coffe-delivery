@@ -8,15 +8,18 @@ import { useNavigation } from '@react-navigation/native'
 import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationProps';
 import { useCartStore } from '../../store/cartStore';
 import { calculateAllQuantityItem } from '../../utils/calculateAllQuantityItem';
+import Animated, { AnimatedStyleProp } from 'react-native-reanimated';
+import { TextStyle } from 'react-native';
 
 type Props = ViewProps & {
   goBack?: boolean,
   title?: string,
   showCart?: boolean,
   iconColor?: string,
+  addressColor?: AnimatedStyleProp<TextStyle>,
 }
 
-export function Header({ goBack = false, title = '', showCart = true, iconColor = THEME.colors.product.yellow_dark, ...rest }: Props) {
+export function Header({ goBack = false, title = '', addressColor, showCart = true, iconColor = THEME.colors.product.yellow_dark, ...rest }: Props) {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
   const coffeAddedToCart = useCartStore((state) => state.coffeAddedToCart);
 
@@ -38,9 +41,9 @@ export function Header({ goBack = false, title = '', showCart = true, iconColor 
       ) : (
         <View style={styles.userLocation}>
           <MapPin size={20} weight="fill" color={THEME.colors.product.purple} />
-          <Text style={styles.text}>
+          <Animated.Text style={[styles.text, addressColor]}>
             Ponta Grossa, PR
-          </Text>
+          </Animated.Text>
         </View>
       )}
 
