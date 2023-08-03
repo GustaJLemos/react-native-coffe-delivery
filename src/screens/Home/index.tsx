@@ -17,6 +17,7 @@ import { CoffeAddedToast } from '../../components/CoffeAddedToast';
 import Animated, { Keyframe, interpolate, useAnimatedStyle, useSharedValue, withSequence, withTiming, Easing, FadeIn, SlideInDown, SlideInUp, SlideInRight, useAnimatedScrollHandler, Extrapolate, runOnJS, interpolateColor } from 'react-native-reanimated';
 import CoffeBeanSvg from '../../assets/coffes/CoffeBean.svg'
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+// TODO, ver sobre timing e várias funções do clock
 
 const TouchabledAnimated = Animated.createAnimatedComponent(TouchableOpacity);
 const SectionListAnimated = Animated.createAnimatedComponent(SectionList);
@@ -88,7 +89,7 @@ export function Home() {
     return ({
       opacity: coffeAddedOpacity.value,
       transform: [
-        { translateY: interpolate(coffedAddedTranslateY.value, [0, 1, 1, 0], [0, height, height, 0]) }
+        { translateY: interpolate(coffedAddedTranslateY.value, [0, 1, 0], [0, height, 0]) }
       ]
     });
   })
@@ -121,7 +122,7 @@ export function Home() {
 
   const textColorStyles = useAnimatedStyle(() => {
     return ({
-      color: interpolateColor(coffeListPosition.value, [0, -335], [THEME.colors.base.gray_200, THEME.colors.base.gray_900])
+      color: interpolateColor(coffeListPosition.value, [0, -335], [THEME.colors.base.gray_900, THEME.colors.base.gray_200])
     })
   })
 
@@ -157,7 +158,7 @@ export function Home() {
   useEffect(() => {
     if (cartStore.showCoffeToast) {
       coffeAddedOpacity.value = 1;
-      coffedAddedTranslateY.value = withSequence(withTiming(0), withTiming(1, { duration: 10000 }), withTiming(1, { duration: 10000, easing: Easing.linear }), withTiming(0))
+      // coffedAddedTranslateY.value = withPa
     } else {
       coffeAddedOpacity.value = 0;
     }
@@ -175,32 +176,31 @@ export function Home() {
   const coffeListScrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       console.log('event.contentOffset.y', event.contentOffset.y)
-      if (scrollY.value < 500) {
+      if (scrollY.value < 300) {
         'worklet'
         runOnJS(setFilterSelected)('tradicionais')
       }
-      if (scrollY.value > 460) {
+      if (scrollY.value > 300 && scrollY.value < 600) {
         'worklet'
         runOnJS(setFilterSelected)('doces')
       }
-      if (scrollY.value > 780) {
+      if (scrollY.value > 600) {
         'worklet'
         runOnJS(setFilterSelected)('especiais')
       }
-      if (scrollY.value > 800) {
-        return;
-      }
+      // if (scrollY.value > 800) {
+      //   return;
+      // }
       scrollY.value = event.contentOffset.y
     }
   })
 
   const onPan = Gesture.Pan().onUpdate((event) => {
+    console.log('event.translationY', event.translationY)
     const onMove = event.translationY < 0 && event.translationY > (-440);
     // no onEnd, eu verifico a posição de onde ele está, e de acordo com isso, eu transfiro ele para a posição inicial (0), ou coloco ele pra cima de uma vez
     if (onMove) {
       coffeListPosition.value = event.translationY
-    } else {
-      coffeListPosition.value = coffeListPosition.value
     }
   }).onEnd((event) => {
     console.log('lalellele la em casa', event.translationY)
@@ -227,7 +227,7 @@ export function Home() {
         {/* TODO ver uma forma de passar a cor aq e mudar quando tiver a animação */}
         {/* TODO tenq ver a animação do toast lá embaixo */}
         {/* TODO fazer animação de quando clicar navegar lá pra baixo, além disso mover todo o negócio lá pra cima, quando eu tiver gfazendo o pan pra cima, eu tbm já mudo o filtro selecionado para o primeiro */}
-        <Header />
+        <Header addressColor={textColorStyles} />
 
         <Animated.View style={[styles.background, onPanAnimation]} entering={SlideInUp.easing(Easing.linear).duration(1000)} />
 
@@ -328,72 +328,36 @@ export function Home() {
             </Animated.View>
           </GestureDetector>
           <Animated.View style={lala}>
-            {
-              lalalele ? (
-                principalCoffes.map((item) => (
-                  <CoffeCard
-                    key={item.id}
-                    coffe={item}
-                    onPress={() => handleNavigateToCoffeDetails(item)}
-                  />
-                ))
-              ) : (
-                // <SectionListAnimated
-                //   ref={scrollRef}
-                //   onScroll={coffeListScrollHandler}
-                //   // scrollEnabled={!(coffeListPosition.value > (-440))}
-                //   sections={sectionedListCoffes}
-                //   hitSlop={{ top: 400 }}
-                //   showsVerticalScrollIndicator={false}
-                //   style={{ flexGrow: 1 }}
-                //   scrollEnabled={true}
-                //   contentContainerStyle={styles.contentCoffeList}
-                //   keyExtractor={(item, index) => item.id + index}
-                //   renderItem={({ item }) => (
-                //     <CoffeCard
-                //       key={item.id}
-                //       coffe={item}
-                //       onPress={() => handleNavigateToCoffeDetails(item)}
-                //     />
-                //   )}
-                //   renderSectionHeader={({ section }) => (
-                //     <Text
-                //       style={styles.coffeListTitle}
-                //     >
-                //       {section.title}
-                //     </Text>
-                //   )}
-                // />
-                // TODO talvez realmente terei q usar a scrollView envolta de tudo
-                <ScrollView>
-                  {traditionalCoffees.map((item) => (
-                    <CoffeCard
-                      key={item.id}
-                      coffe={item}
-                      onPress={() => handleNavigateToCoffeDetails(item)}
-                    />
-                  ))}
-                  {sweetCoffees.map((item) => (
-                    <CoffeCard
-                      key={item.id}
-                      coffe={item}
-                      onPress={() => handleNavigateToCoffeDetails(item)}
-                    />
-                  ))}
-                  {specialtyCoffees.map((item) => (
-                    <CoffeCard
-                      key={item.id}
-                      coffe={item}
-                      onPress={() => handleNavigateToCoffeDetails(item)}
-                    />
-                  ))}
-                </ScrollView>
-              )
-            }
+            <SectionListAnimated
+              ref={scrollRef}
+              onScroll={coffeListScrollHandler}
+              // scrollEnabled={!(coffeListPosition.value > (-440))}
+              sections={sectionedListCoffes}
+              hitSlop={{ top: 400 }}
+              showsVerticalScrollIndicator={false}
+              style={{ height: SECTION_LIST_HEIGHT }}
+              contentContainerStyle={styles.contentCoffeList}
+              keyExtractor={(item, index) => item.id + index}
+              renderItem={({ item }) => (
+                <CoffeCard
+                  key={item.id}
+                  coffe={item}
+                  onPress={() => handleNavigateToCoffeDetails(item)}
+                />
+              )}
+              renderSectionHeader={({ section }) => (
+                <Text
+                  style={styles.coffeListTitle}
+                >
+                  {section.title}
+                </Text>
+              )}
+            />
+            {/* // TODO talvez realmente terei q usar a scrollView envolta de tudo */}
           </Animated.View>
         </Animated.View>
-
       </View >
+      {/* TODO arrumar a animação desse carinha */}
       <CoffeAddedToast
         style={coffeAddedAnimation}
       />

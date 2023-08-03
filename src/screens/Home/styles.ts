@@ -6,7 +6,8 @@ const { width, height } = Dimensions.get('window');
 export const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 32,
+    paddingHorizontal: 32,
+    paddingTop: 32,
     backgroundColor: THEME.colors.base.gray_900,
   },
   background: {
@@ -72,6 +73,7 @@ export const styles = StyleSheet.create({
     marginTop: 12,
   },
   contentCoffeList: {
+    flexGrow: 1,
     gap: 12,
   }
 });
