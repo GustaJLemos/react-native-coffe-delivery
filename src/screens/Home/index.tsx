@@ -17,6 +17,7 @@ import { CoffeAddedToast } from '../../components/CoffeAddedToast';
 import Animated, { Keyframe, interpolate, useAnimatedStyle, useSharedValue, withSequence, withTiming, Easing, FadeIn, SlideInDown, SlideInUp, SlideInRight, useAnimatedScrollHandler, Extrapolate, runOnJS, interpolateColor } from 'react-native-reanimated';
 import CoffeBeanSvg from '../../assets/coffes/CoffeBean.svg'
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { withDelay } from 'react-native-reanimated/lib/types/lib/reanimated2/animation';
 // TODO, ver sobre timing e várias funções do clock
 
 const TouchabledAnimated = Animated.createAnimatedComponent(TouchableOpacity);
@@ -89,7 +90,7 @@ export function Home() {
     return ({
       opacity: coffeAddedOpacity.value,
       transform: [
-        { translateY: interpolate(coffedAddedTranslateY.value, [0, 1, 0], [0, height, 0]) }
+        { translateY: interpolate(coffedAddedTranslateY.value, [1, 0], [height, 0]) }
       ]
     });
   })
@@ -157,10 +158,11 @@ export function Home() {
   // TODO tenq fazer essa animação certo
   useEffect(() => {
     if (cartStore.showCoffeToast) {
-      coffeAddedOpacity.value = 1;
-      // coffedAddedTranslateY.value = withPa
+      coffeAddedOpacity.value = 1
+      coffedAddedTranslateY.value = withTiming(1, { duration: 5000, easing: Easing.in(Easing.exp) });
     } else {
       coffeAddedOpacity.value = 0;
+      coffedAddedTranslateY.value = 0;
     }
   }, [cartStore.showCoffeToast])
 
@@ -358,9 +360,13 @@ export function Home() {
         </Animated.View>
       </View >
       {/* TODO arrumar a animação desse carinha */}
-      <CoffeAddedToast
-        style={coffeAddedAnimation}
-      />
+      {
+        cartStore.showCoffeToast && (
+          <CoffeAddedToast
+            style={coffeAddedAnimation}
+          />
+        )
+      }
     </>
   );
 }
