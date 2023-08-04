@@ -18,7 +18,6 @@ import Animated, { Keyframe, interpolate, useAnimatedStyle, useSharedValue, with
 import CoffeBeanSvg from '../../assets/coffes/CoffeBean.svg'
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { withDelay } from 'react-native-reanimated/lib/types/lib/reanimated2/animation';
-// TODO, ver sobre timing e várias funções do clock
 
 const TouchabledAnimated = Animated.createAnimatedComponent(TouchableOpacity);
 const SectionListAnimated = Animated.createAnimatedComponent(SectionList);
@@ -41,16 +40,11 @@ const SECTION_LIST_HEIGHT = sectionedListCoffes.length * (COFFE_CARD_HEIGHT + CO
 
 const HEIGHT_HEADER = 300;
 
-// TODO fazer a mudança dos itens selecionados quando scrolla
-// TODO scrollar para o lugar de onde ele selecionou
-
 export function Home() {
   const [filterSelected, setFilterSelected] = useState<CoffeType | null>(null);
-  const [lalalele, setlala] = useState(true);
+  const [canScroll, setCanScroll] = useState(true);
 
   const scrollRef = useRef<SectionList>(null);
-
-  const coffeListTitleFilterRef = useRef<{ yPosition: number }[]>(null);
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
@@ -69,11 +63,8 @@ export function Home() {
   }
 
   function handleSelectFilter(filter: CoffeType) {
-    console.log('asdklaskdjasdk')
-
-    console.log('coffeListTitleFilterRef.current[0].yPosition', coffeListTitleFilterRef)
-
-    scrollRef.current.scrollToLocation
+    setCanScroll(false);
+    setFilterSelected(filter);
 
     switch (filter) {
       case 'tradicionais':
@@ -86,10 +77,10 @@ export function Home() {
         scrollRef.current?.scrollToLocation({ itemIndex: 0, sectionIndex: 2 })
         break;
     }
-    setFilterSelected(filter);
+    console.log('eu sou mais rápido?')
   }
 
-  const coffeAddedAnimation = useAnimatedStyle(() => {
+  const coffeAddedStyles = useAnimatedStyle(() => {
     return ({
       opacity: coffeAddedOpacity.value,
       transform: [
@@ -98,16 +89,7 @@ export function Home() {
     });
   })
 
-  // const onScrollAnimation = useAnimatedStyle(() => {
-  //   return ({
-  //     opacity: interpolate(scrollY.value, [0, 200, 300, 400, 500], [1, 0.8, 0.4, 0.2, 0], Extrapolate.CLAMP),
-  //     transform: [
-  //       { translateY: interpolate(scrollY.value, [0, 100, 200, 300, 400, 500, 600, 700], [0, -40, -80, -120, -160, -180, -220, -260], Extrapolate.CLAMP) }
-  //     ],
-  //   })
-  // })
-
-  const onPanAnimation = useAnimatedStyle(() => {
+  const coffeOnPanStyles = useAnimatedStyle(() => {
     return ({
       opacity: interpolate((coffeListPosition.value * -1), [0, 100, 200, 300, 400, 410], [1, 0.9, 0.8, 0.7, 0.6, 0], Extrapolate.CLAMP),
       transform: [
@@ -116,7 +98,7 @@ export function Home() {
     })
   })
 
-  const lala = useAnimatedStyle(() => {
+  const CoffeFilterStyles = useAnimatedStyle(() => {
     return ({
       transform: [
         { translateY: coffeListPosition.value }
@@ -130,35 +112,6 @@ export function Home() {
     })
   })
 
-  const headerAnimation = useAnimatedStyle(() => {
-    return ({
-      transform: [
-        { translateY: interpolate(scrollY.value, [0, 50, 100, 150, 200, 250], [0, 0, 0, 0, 0, 0, 0, 0], Extrapolate.CLAMP) }
-      ],
-      backgroundColor: interpolateColor(scrollY.value, [200, 250], [THEME.colors.base.gray_100, THEME.colors.base.gray_900]),
-      position: scrollY.value > 200 ? 'absolute' : 'relative',
-      top: 0
-    })
-  })
-
-  const fixedHeaderStyles = useAnimatedStyle(() => {
-    return {
-      position: 'absolute',
-      zIndex: 1,
-      // flex: 1,
-      width: '110%',
-      left: '-5%',
-      paddingTop: 50,
-      // paddingVertical: 40,
-      backgroundColor: THEME.colors.base.gray_900,
-      opacity: interpolate(scrollY.value, [250, 300], [0, 1], Extrapolate.CLAMP),
-      transform: [
-        { translateY: interpolate(scrollY.value, [250, 300], [-40, HEIGHT_HEADER], Extrapolate.CLAMP) }
-      ]
-    }
-  });
-
-  // TODO tenq fazer essa animação certo
   useEffect(() => {
     if (cartStore.showCoffeToast) {
       coffeAddedOpacity.value = 1
@@ -169,18 +122,18 @@ export function Home() {
     }
   }, [cartStore.showCoffeToast])
 
-  const scrollHandler = useAnimatedScrollHandler({
+  const principalCoffeScrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       scrollX.value = event.contentOffset.x
     }
   })
 
-  // dar uma olhada pq essa animação aq tá bugando
+  // TODO dar uma olhada pq essa animação aq tá bugando
   // TODO se pá se eu usar a parada de gesto aq isso resolve, ai habilito o scroll dps de uma certa hr da tela
   // TODO basicamente boyo o identificador de gestos aq, e "puxo" ele até la emcima, a aprtir de uma posição definida eu "travo" o usuário, e habilito o scroll
   const coffeListScrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
-      console.log('event.contentOffset.y', event.contentOffset.y)
+      if (!canScroll) return;
       scrollY.value = event.contentOffset.y
 
       if (scrollY.value < 430) {
@@ -198,21 +151,16 @@ export function Home() {
         runOnJS(setFilterSelected)('especiais')
         return
       }
-      // if (scrollY.value > 800) {
-      //   return;
-      // }
     }
   })
 
   const onPan = Gesture.Pan().onUpdate((event) => {
-    console.log('event.translationY', event.translationY)
     const onMove = event.translationY < 0 && event.translationY > (-440);
     // no onEnd, eu verifico a posição de onde ele está, e de acordo com isso, eu transfiro ele para a posição inicial (0), ou coloco ele pra cima de uma vez
     if (onMove) {
       coffeListPosition.value = event.translationY
     }
   }).onEnd((event) => {
-    console.log('lalellele la em casa', event.translationY)
     if (event.translationY > (-300)) {
       coffeListPosition.value = withTiming(-0)
 
@@ -222,39 +170,20 @@ export function Home() {
       coffeListPosition.value = withTiming(-440)
 
       'worklet'
-      runOnJS(setlala)(false)
-
-      'worklet'
       runOnJS(setFilterSelected)('tradicionais')
     }
-
-    console.log('event', event)
   })
 
   return (
     <>
       <View
         style={styles.container}
-      // showsVerticalScrollIndicator={false}
-      // onScroll={coffeListScrollHandler}
       >
-        {/* mudar a cor do texto dps de certa posição apra o preto */}
-        {/* TODO ver uma forma de passar a cor aq e mudar quando tiver a animação */}
-        {/* TODO tenq ver a animação do toast lá embaixo */}
-        {/* TODO fazer animação de quando clicar navegar lá pra baixo, além disso mover todo o negócio lá pra cima, quando eu tiver gfazendo o pan pra cima, eu tbm já mudo o filtro selecionado para o primeiro */}
         <Header addressColor={textColorStyles} />
 
-        <Animated.View style={[styles.background, onPanAnimation]} entering={SlideInUp.easing(Easing.linear).duration(1000)} />
-
-        <Animated.View style={onPanAnimation}>
-
+        <Animated.View style={[styles.background, coffeOnPanStyles]} entering={SlideInUp.easing(Easing.linear).duration(1000)} />
+        <Animated.View style={coffeOnPanStyles}>
           <Animated.View entering={FadeIn.delay(1000)}>
-
-            {/* <Animated.View style={fixedHeaderStyles}>
-            <Header />
-          </Animated.View> */}
-
-            {/* TODO colocar imagem de café aq no backfround */}
             <Text style={styles.title}>
               Encontre o café perfeito para qualquer hora do dia
             </Text>
@@ -280,7 +209,7 @@ export function Home() {
             style={styles.principalCoffes}
             contentContainerStyle={styles.principalCoffesContent}
             entering={SlideInRight.delay(1500).duration(500)}
-            onScroll={scrollHandler}
+            onScroll={principalCoffeScrollHandler}
             pagingEnabled
             snapToInterval={SCROLLVIEW_CARD_SIZE}
             decelerationRate={0}
@@ -314,19 +243,11 @@ export function Home() {
               )
             })}
           </Animated.ScrollView>
-
         </Animated.View>
 
-        {/* fazer um "onLongPress" pra puxar esse nossos cafés aq debaixo, 
-        e n deixar o scrooll View habilitado por padrão, só fazer o gesto mesmo */}
-
-        {/* TODO talvez substitui tudo esse cucu aq?
-        por uma scrollView? */}
-
         <Animated.View entering={SlideInDown.delay(1500).duration(800)}>
-          {/* tenho q fazer a animação de  */}
           <GestureDetector gesture={onPan}>
-            <Animated.View style={lala}>
+            <Animated.View style={CoffeFilterStyles}>
               <Text style={styles.filterTitle}>
                 Nossos cafés
               </Text>
@@ -337,12 +258,17 @@ export function Home() {
                     filter={item}
                     selected={filterSelected === item}
                     onSelect={(item) => handleSelectFilter(item)}
+                    onfilterIsSelected={() => {
+                      setCanScroll(true),
+                        console.log('qual é mais rápido?')
+                    }}
                   />
                 ))}
               </View>
             </Animated.View>
           </GestureDetector>
-          <Animated.View style={lala}>
+
+          <Animated.View style={CoffeFilterStyles}>
             <SectionListAnimated
               ref={scrollRef}
               onScroll={coffeListScrollHandler}
@@ -366,15 +292,14 @@ export function Home() {
                 </Text>
               )}
             />
-            {/* // TODO talvez realmente terei q usar a scrollView envolta de tudo */}
           </Animated.View>
         </Animated.View>
       </View >
-      {/* TODO arrumar a animação desse carinha */}
+      {/* TODO, ver melhor a lógica em cima disso, pq ele só vai aparecer isso qunado eu adicionar um café, clicar no carrinho, e dai selecionar outro cafpe */}
       {
         cartStore.showCoffeToast && (
           <CoffeAddedToast
-            style={coffeAddedAnimation}
+            style={coffeAddedStyles}
           />
         )
       }

@@ -12,9 +12,10 @@ type Props = PressableProps & {
   filter: CoffeType,
   selected: boolean,
   onSelect: (filterSelected: CoffeType) => void;
+  onfilterIsSelected: () => void;
 }
 
-export function Filter({ filter, selected, onSelect }: Props) {
+export function Filter({ filter, selected, onSelect, onfilterIsSelected }: Props) {
   const colorAnimation = useSharedValue(0);
 
   const colorBgAnimatedStyles = useAnimatedStyle(() => {
@@ -37,7 +38,8 @@ export function Filter({ filter, selected, onSelect }: Props) {
 
   return (
     <PressabledAnimated
-      onPress={() => onSelect(filter)}
+      onPressIn={() => onSelect(filter)}
+      onPressOut={onfilterIsSelected}
       style={[
         styles.container,
         colorBgAnimatedStyles

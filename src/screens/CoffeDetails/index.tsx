@@ -85,19 +85,13 @@ export function CoffeDetails() {
     });
   });
 
-  // TODO fazer animação de fumaçinha
-  // TODO caralho seria muito massa fazer uma animação de quando o cara selecionar o tamanho a imagem do coffe aumeenta ou diminui
-
   function onPress() {
     sizeRequired.value = withSequence(withTiming(1), withTiming(0))
     notificationAsync(NotificationFeedbackType.Error)
   }
 
-
   return (
-    <View
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <View style={styles.background}>
         <Header goBack iconColor={THEME.colors.base.white} />
 
@@ -133,6 +127,7 @@ export function CoffeDetails() {
           />
         </View>
       </View>
+
       <View style={styles.bottomContainer}>
         <Animated.Text style={[styles.sizeText, sizeRequiredTextAnimation]}>
           Selecione o tamanho:
@@ -154,10 +149,6 @@ export function CoffeDetails() {
             count={coffeCounter}
             setCount={setCoffeCounter}
           />
-          {/* TODO impleemntar componentezinho de adicionado ao carrinho lá embaxio */}
-
-          {/* TODO dar disable enqunato n tiver selecionado */}
-          {/* TODO fazer animação em vermelho de quando ele tenta clicar no botão desabilitado */}
           <Button
             title='Adicionar'
             type='purple'

@@ -53,7 +53,6 @@ export function Header({ goBack = false, title = '', addressColor, showCart = tr
         </Text>
       )}
 
-      {/* TODO fazer a contagem de itens */}
       {showCart ? (
         <TouchableOpacity
           style={styles.coffesInCartIcon}

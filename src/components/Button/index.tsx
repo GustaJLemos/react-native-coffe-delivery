@@ -12,6 +12,7 @@ type Props = TouchableOpacityProps & {
 
 export function Button({ title, type, disabled, ...rest }: Props) {
   // TODO tenq fazer a animação de onFocus aq
+  // TODO ver como dá pra fazer aquela corzinha no background quando clica
   return (
     <TouchableOpacity
       activeOpacity={0.5}

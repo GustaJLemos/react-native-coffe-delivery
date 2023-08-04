@@ -48,5 +48,4 @@ export const useCartStore = create<StoreProps>((set) => ({
   ),
   showCoffeToast: false,
   setShowCoffeToast: (showCoffe: boolean) => set(() => ({ showCoffeToast: showCoffe })),
-  // TODO fazer função de excluir um café em específico
 }))
