@@ -41,6 +41,9 @@ const SECTION_LIST_HEIGHT = sectionedListCoffes.length * (COFFE_CARD_HEIGHT + CO
 
 const HEIGHT_HEADER = 300;
 
+// TODO fazer a mudança dos itens selecionados quando scrolla
+// TODO scrollar para o lugar de onde ele selecionou
+
 export function Home() {
   const [filterSelected, setFilterSelected] = useState<CoffeType | null>(null);
   const [lalalele, setlala] = useState(true);
@@ -67,23 +70,23 @@ export function Home() {
 
   function handleSelectFilter(filter: CoffeType) {
     console.log('asdklaskdjasdk')
-    setFilterSelected(filter);
 
     console.log('coffeListTitleFilterRef.current[0].yPosition', coffeListTitleFilterRef)
+
+    scrollRef.current.scrollToLocation
 
     switch (filter) {
       case 'tradicionais':
         scrollRef.current.scrollToLocation({ itemIndex: 0, sectionIndex: 0 })
         break;
       case 'doces':
-        scrollRef.current?.scrollToLocation({ itemIndex: 1, sectionIndex: 1 })
+        scrollRef.current?.scrollToLocation({ itemIndex: 0, sectionIndex: 1 })
         break;
       case 'especiais':
-        scrollRef.current?.scrollToLocation({ itemIndex: 2, sectionIndex: 2 })
-        break;
-      default:
+        scrollRef.current?.scrollToLocation({ itemIndex: 0, sectionIndex: 2 })
         break;
     }
+    setFilterSelected(filter);
   }
 
   const coffeAddedAnimation = useAnimatedStyle(() => {
@@ -178,22 +181,26 @@ export function Home() {
   const coffeListScrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       console.log('event.contentOffset.y', event.contentOffset.y)
-      if (scrollY.value < 300) {
+      scrollY.value = event.contentOffset.y
+
+      if (scrollY.value < 430) {
         'worklet'
         runOnJS(setFilterSelected)('tradicionais')
+        return
       }
-      if (scrollY.value > 300 && scrollY.value < 600) {
+      if (scrollY.value > 430 && scrollY.value < 910) {
         'worklet'
         runOnJS(setFilterSelected)('doces')
+        return
       }
-      if (scrollY.value > 600) {
+      if (scrollY.value > 910) {
         'worklet'
         runOnJS(setFilterSelected)('especiais')
+        return
       }
       // if (scrollY.value > 800) {
       //   return;
       // }
-      scrollY.value = event.contentOffset.y
     }
   })
 
@@ -208,11 +215,17 @@ export function Home() {
     console.log('lalellele la em casa', event.translationY)
     if (event.translationY > (-300)) {
       coffeListPosition.value = withTiming(-0)
+
+      'worklet'
+      runOnJS(setFilterSelected)(null)
     } else {
       coffeListPosition.value = withTiming(-440)
 
       'worklet'
       runOnJS(setlala)(false)
+
+      'worklet'
+      runOnJS(setFilterSelected)('tradicionais')
     }
 
     console.log('event', event)
@@ -333,9 +346,7 @@ export function Home() {
             <SectionListAnimated
               ref={scrollRef}
               onScroll={coffeListScrollHandler}
-              // scrollEnabled={!(coffeListPosition.value > (-440))}
               sections={sectionedListCoffes}
-              hitSlop={{ top: 400 }}
               showsVerticalScrollIndicator={false}
               style={{ height: SECTION_LIST_HEIGHT }}
               contentContainerStyle={styles.contentCoffeList}
