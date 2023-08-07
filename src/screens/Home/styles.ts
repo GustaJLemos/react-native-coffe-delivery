@@ -73,7 +73,6 @@ export const styles = StyleSheet.create({
     marginTop: 12,
   },
   contentCoffeList: {
-    flexGrow: 1,
     gap: 12,
   }
 });

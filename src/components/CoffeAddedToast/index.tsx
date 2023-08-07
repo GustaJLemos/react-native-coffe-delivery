@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { View, Text, Pressable, PressableProps } from 'react-native';
 import { styles } from './styles';
 import { useCartStore } from '../../store/cartStore';
 import { ArrowRight, ShoppingCart } from 'phosphor-react-native';
@@ -8,9 +8,9 @@ import { useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationProps';
 import Animated from 'react-native-reanimated';
 
-const TouchabledAnimated = Animated.createAnimatedComponent(TouchableOpacity);
+const TouchabledAnimated = Animated.createAnimatedComponent(Pressable);
 
-type Props = TouchableOpacityProps;
+type Props = PressableProps;
 
 export function CoffeAddedToast({ ...rest }: Props) {
   const navigation = useNavigation<AppNavigatorRoutesProps>();

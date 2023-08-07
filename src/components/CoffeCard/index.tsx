@@ -10,7 +10,7 @@ type Props = TouchableOpacityProps & {
 
 export function CoffeCard({ coffe: { name, description, price, image: Image }, ...rest }: Props) {
   return (
-    <TouchableOpacity style={styles.container} {...rest}>
+    <TouchableOpacity activeOpacity={1} style={styles.container} {...rest}>
       <Image
         style={{ marginTop: -15 }}
       />

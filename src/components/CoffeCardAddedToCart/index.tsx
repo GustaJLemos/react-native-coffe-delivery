@@ -45,6 +45,7 @@ export function CoffeCardAddedToCart({ coffe: { name, size, id, quantity, image:
           <TouchableOpacity
             style={styles.trashIconContainer}
             onPress={() => deleteCoffe(id, size)}
+            activeOpacity={0.5}
           >
             <Trash size={20} color={THEME.colors.product.purple} />
           </TouchableOpacity>
