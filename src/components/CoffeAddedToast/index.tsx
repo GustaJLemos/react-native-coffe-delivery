@@ -6,7 +6,7 @@ import { ArrowRight, ShoppingCart } from 'phosphor-react-native';
 import { THEME } from '../../theme';
 import { useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationProps';
-import Animated, { SlideInDown, SlideInUp } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 
 const TouchabledAnimated = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -27,8 +27,6 @@ export function CoffeAddedToast({ ...rest }: Props) {
     <TouchabledAnimated
       style={[styles.container, rest.style]}
       onPress={() => navigation.navigate('CartScreen')}
-    // entering={SlideInDown.duration(5000)}
-    // exiting={SlideInUp}
     >
       <View style={styles.cartIconContainer}>
         <View style={styles.coffesInCart}>

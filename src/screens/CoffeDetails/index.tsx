@@ -4,7 +4,6 @@ import { View, Text } from 'react-native';
 import { styles } from './styles';
 import { Header } from '../../components/Header';
 import CoffePng from '../../assets/coffes/Coffee.png';
-import { Image } from 'react-native';
 import { coffeSizesOptions } from '../../mocks/coffes';
 import { Select } from '../../components/Select';
 import { CoffeQuantityCounter } from '../../components/CoffeQuantityCounter';
@@ -14,7 +13,7 @@ import { useCartStore } from '../../store/cartStore';
 import { CoffeSize } from '../../types/CoffeSize';
 import { CoffeAddedToCart } from '../../types/CoffeAddedToCart';
 import { THEME } from '../../theme';
-import Animated, { BounceIn, Easing, Layout, SlideInLeft, SlideInRight, SlideOutRight, interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { BounceIn, interpolateColor, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
 import { notificationAsync, NotificationFeedbackType } from 'expo-haptics';
 
 export function CoffeDetails() {
@@ -67,7 +66,7 @@ export function CoffeDetails() {
     }
   }
 
-  const sizeRequiredTextAnimation = useAnimatedStyle(() => {
+  const sizeRequiredTextStyles = useAnimatedStyle(() => {
     return ({
       color: interpolateColor(
         sizeRequired.value,
@@ -77,7 +76,7 @@ export function CoffeDetails() {
     });
   });
 
-  const coffeImageAnimation = useAnimatedStyle(() => {
+  const coffeImageStyles = useAnimatedStyle(() => {
     return ({
       width: sizeSelected.value * 200,
       height: sizeSelected.value * 200,
@@ -123,13 +122,13 @@ export function CoffeDetails() {
           <Animated.Image
             source={CoffePng}
             entering={BounceIn.duration(200)}
-            style={coffeImageAnimation}
+            style={coffeImageStyles}
           />
         </View>
       </View>
 
       <View style={styles.bottomContainer}>
-        <Animated.Text style={[styles.sizeText, sizeRequiredTextAnimation]}>
+        <Animated.Text style={[styles.sizeText, sizeRequiredTextStyles]}>
           Selecione o tamanho:
         </Animated.Text>
         <View style={styles.sizeOptions}>

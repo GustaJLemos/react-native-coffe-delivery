@@ -18,13 +18,9 @@ export function CoffeCardAddedToCart({ coffe: { name, size, id, quantity, image:
   const [coffeCounter, setCoffeCounter] = useState<number>(quantity);
 
   function handleUpdateCoffeQuantity(newCount: number) {
-    let itemToUpdateQuantity =
-
-      setCoffeCounter(newCount);
+    setCoffeCounter(newCount);
     cartStore.updateCoffeQuantityById({ id, newQuantity: newCount, itemSize: size });
   }
-
-
 
   return (
     <View style={styles.container}>

@@ -12,18 +12,18 @@ import { Audio } from 'expo-av';
 export function FinishPurchase() {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
+  const clearAllCoffeAddedToCart = useCartStore((state) => state.clearAllCoffeAddedToCart);
+
   function handleClearAllCoffeAndNavigateToHome() {
     clearAllCoffeAddedToCart();
     navigation.navigate('HomeScreen');
     return true;
   }
 
-  const clearAllCoffeAddedToCart = useCartStore((state) => state.clearAllCoffeAddedToCart);
-
   async function playSound() {
-    const FinishPurchaseAudio = require('../../assets/correct.mp3');
+    const finishPurchaseAudio = require('../../assets/correct.mp3');
 
-    const { sound } = await Audio.Sound.createAsync(FinishPurchaseAudio, { shouldPlay: true })
+    const { sound } = await Audio.Sound.createAsync(finishPurchaseAudio, { shouldPlay: true })
 
     await sound.setPositionAsync(0)
     await sound.playAsync();

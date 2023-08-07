@@ -23,7 +23,6 @@ export const coffeFilterType: CoffeType[] = [
   'tradicionais', 'doces', 'especiais'
 ]
 
-
 export const traditionalCoffees: Coffes[] = [
   {
     id: '1',

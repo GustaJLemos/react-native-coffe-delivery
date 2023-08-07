@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
 import { styles } from './styles';
@@ -12,7 +12,7 @@ import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationP
 import { useCartStore } from '../../store/cartStore';
 import { calculateItemPrices } from '../../utils/calculateItemPrices';
 import { ShoppingCart } from 'phosphor-react-native';
-import Animated, { FadeIn, Layout, SlideInDown, SlideInRight, SlideInUp, SlideOutRight } from 'react-native-reanimated';
+import Animated, { FadeIn, Layout, SlideInRight, SlideOutRight } from 'react-native-reanimated';
 import { Swipeable } from 'react-native-gesture-handler';
 
 type DeleteCoffe = {
@@ -22,8 +22,6 @@ type DeleteCoffe = {
 }
 
 export function Cart() {
-  // const [totalPrice, setTotalPrice] = useState<string>('');
-
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   const cartStore = useCartStore((state) => state);
@@ -40,6 +38,7 @@ export function Cart() {
     cartStore.deleteCoffeAddedById(id, size);
   }
 
+  // TODO melhorar essa lógica aq, pra gente conseguir de outra forma mostrar o toast
   useEffect(() => {
     cartStore.setShowCoffeToast(false);
   }, [])

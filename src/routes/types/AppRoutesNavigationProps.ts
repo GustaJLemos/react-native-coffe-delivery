@@ -1,5 +1,4 @@
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Coffes } from '../../types/Coffes';
 
 export type AppRoutesProps = {
   HomeScreen: undefined,

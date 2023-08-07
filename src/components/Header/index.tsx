@@ -42,6 +42,7 @@ export function Header({ goBack = false, title = '', addressColor, showCart = tr
         <View style={styles.userLocation}>
           <MapPin size={20} weight="fill" color={THEME.colors.product.purple} />
           <Animated.Text style={[styles.text, addressColor]}>
+            {/* TODO dá pra pegar a última localização do usuário aq */}
             Ponta Grossa, PR
           </Animated.Text>
         </View>

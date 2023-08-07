@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Text, TextInput, View, ScrollView, Dimensions, TouchableOpacity, SectionList, FlatList } from 'react-native';
+import { Text, TextInput, View, Dimensions, TouchableOpacity, SectionList } from 'react-native';
 import { MagnifyingGlass } from 'phosphor-react-native';
 import { styles } from './styles';
 import { Header } from '../../components/Header';
@@ -7,17 +7,16 @@ import { THEME } from '../../theme';
 import { CoffePrincipalCard } from '../../components/CoffePrincipalCard';
 import { Filter } from '../../components/Filter';
 import { CoffeCard } from '../../components/CoffeCard';
-import { coffeFilterType, principalCoffes, sectionedListCoffes, specialtyCoffees, sweetCoffees, traditionalCoffees } from '../../mocks/coffes';
+import { coffeFilterType, principalCoffes, sectionedListCoffes, } from '../../mocks/coffes';
 import { CoffeType } from '../../types/CoffeType';
 import { useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '../../routes/types/AppRoutesNavigationProps';
 import { Coffes } from '../../types/Coffes';
 import { useCartStore } from '../../store/cartStore';
 import { CoffeAddedToast } from '../../components/CoffeAddedToast';
-import Animated, { Keyframe, interpolate, useAnimatedStyle, useSharedValue, withSequence, withTiming, Easing, FadeIn, SlideInDown, SlideInUp, SlideInRight, useAnimatedScrollHandler, Extrapolate, runOnJS, interpolateColor } from 'react-native-reanimated';
+import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming, Easing, FadeIn, SlideInDown, SlideInUp, SlideInRight, useAnimatedScrollHandler, Extrapolate, runOnJS, interpolateColor } from 'react-native-reanimated';
 import CoffeBeanSvg from '../../assets/coffes/CoffeBean.svg'
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
-import { withDelay } from 'react-native-reanimated/lib/types/lib/reanimated2/animation';
 
 const TouchabledAnimated = Animated.createAnimatedComponent(TouchableOpacity);
 const SectionListAnimated = Animated.createAnimatedComponent(SectionList);
@@ -37,8 +36,6 @@ const COFFE_CARD_LIST_TITLE = 48
 const COFFE_CARD_LIST_GAP = 12
 
 const SECTION_LIST_HEIGHT = sectionedListCoffes.length * (COFFE_CARD_HEIGHT + COFFE_CARD_LIST_GAP + COFFE_CARD_LIST_TITLE)
-
-const HEIGHT_HEADER = 300;
 
 export function Home() {
   const [filterSelected, setFilterSelected] = useState<CoffeType | null>(null);
@@ -98,7 +95,7 @@ export function Home() {
     })
   })
 
-  const CoffeFilterStyles = useAnimatedStyle(() => {
+  const coffeFilterStyles = useAnimatedStyle(() => {
     return ({
       transform: [
         { translateY: coffeListPosition.value }
@@ -131,6 +128,9 @@ export function Home() {
   // TODO dar uma olhada pq essa animação aq tá bugando
   // TODO se pá se eu usar a parada de gesto aq isso resolve, ai habilito o scroll dps de uma certa hr da tela
   // TODO basicamente boyo o identificador de gestos aq, e "puxo" ele até la emcima, a aprtir de uma posição definida eu "travo" o usuário, e habilito o scroll
+
+  // TODO trocar os touchableOpacity
+  // TODO arrumar animação de quando vc clica no filtro ele fica piscando
   const coffeListScrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       if (!canScroll) return;
@@ -156,7 +156,7 @@ export function Home() {
 
   const onPan = Gesture.Pan().onUpdate((event) => {
     const onMove = event.translationY < 0 && event.translationY > (-440);
-    // no onEnd, eu verifico a posição de onde ele está, e de acordo com isso, eu transfiro ele para a posição inicial (0), ou coloco ele pra cima de uma vez
+
     if (onMove) {
       coffeListPosition.value = event.translationY
     }
@@ -247,7 +247,7 @@ export function Home() {
 
         <Animated.View entering={SlideInDown.delay(1500).duration(800)}>
           <GestureDetector gesture={onPan}>
-            <Animated.View style={CoffeFilterStyles}>
+            <Animated.View style={coffeFilterStyles}>
               <Text style={styles.filterTitle}>
                 Nossos cafés
               </Text>
@@ -258,17 +258,14 @@ export function Home() {
                     filter={item}
                     selected={filterSelected === item}
                     onSelect={(item) => handleSelectFilter(item)}
-                    onfilterIsSelected={() => {
-                      setCanScroll(true),
-                        console.log('qual é mais rápido?')
-                    }}
+                    onfilterIsSelected={() => setCanScroll(true)}
                   />
                 ))}
               </View>
             </Animated.View>
           </GestureDetector>
 
-          <Animated.View style={CoffeFilterStyles}>
+          <Animated.View style={coffeFilterStyles}>
             <SectionListAnimated
               ref={scrollRef}
               onScroll={coffeListScrollHandler}
@@ -295,6 +292,7 @@ export function Home() {
           </Animated.View>
         </Animated.View>
       </View >
+      {/* TODO ver se essa animação ta nice */}
       {/* TODO, ver melhor a lógica em cima disso, pq ele só vai aparecer isso qunado eu adicionar um café, clicar no carrinho, e dai selecionar outro cafpe */}
       {
         cartStore.showCoffeToast && (

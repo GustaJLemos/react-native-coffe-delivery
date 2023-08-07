@@ -15,7 +15,7 @@ type Props = {
 }
 
 export function Select({ text, selected, onSelect, animationValue }: Props) {
-  const sizeRequiredSelectAnimation = useAnimatedStyle(() => {
+  const sizeRequiredSelectStyles = useAnimatedStyle(() => {
     return ({
       borderColor: interpolateColor(
         animationValue.value,
@@ -30,7 +30,7 @@ export function Select({ text, selected, onSelect, animationValue }: Props) {
       onPress={() => onSelect(text)}
       style={[
         styles.container,
-        sizeRequiredSelectAnimation,
+        sizeRequiredSelectStyles,
       ]}
     >
       <Text style={[

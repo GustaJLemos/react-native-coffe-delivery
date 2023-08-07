@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Text, Pressable, PressableProps } from 'react-native';
+import { Pressable, PressableProps } from 'react-native';
 import { CoffeType } from '../../types/CoffeType';
 
 import { styles } from './styles';
@@ -20,12 +20,10 @@ export function Filter({ filter, selected, onSelect, onfilterIsSelected }: Props
 
   const colorBgAnimatedStyles = useAnimatedStyle(() => {
     return ({
-      // dá pra fazer nesse interpolate um cor no meio, tipo um puprle com opacity pra dar aquele efeito
       backgroundColor: interpolateColor(colorAnimation.value, [0, 1], ['transparent', THEME.colors.product.purple]),
     })
   })
 
-  // fazer melhor essa animação aq, pra ela dar uma sumida mais suave
   const colorTextAnimatedStyles = useAnimatedStyle(() => {
     return ({
       color: interpolateColor(colorAnimation.value, [0, 1], [THEME.colors.product.purple_dark, THEME.colors.base.white])
