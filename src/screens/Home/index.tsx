@@ -54,6 +54,8 @@ export function Home() {
   const scrollY = useSharedValue(0);
   const coffeListPosition = useSharedValue(0);
 
+  const toastVisibilityTimeout = useRef<NodeJS.Timeout>(null);
+
   function handleNavigateToCoffeDetails(coffeSelected: Coffes) {
     setCoffeSelected(coffeSelected);
     navigation.navigate('CoffeDetailsScreen');
@@ -74,7 +76,6 @@ export function Home() {
         scrollRef.current?.scrollToLocation({ itemIndex: 0, sectionIndex: 2 })
         break;
     }
-    console.log('eu sou mais rápido?')
   }
 
   const coffeAddedStyles = useAnimatedStyle(() => {
@@ -113,9 +114,15 @@ export function Home() {
     if (cartStore.showCoffeToast) {
       coffeAddedOpacity.value = 1
       coffedAddedTranslateY.value = withTiming(1, { duration: 5000, easing: Easing.in(Easing.exp) });
+      toastVisibilityTimeout.current = setTimeout(() => cartStore.setShowCoffeToast(false), 5000)
     } else {
       coffeAddedOpacity.value = 0;
       coffedAddedTranslateY.value = 0;
+    }
+
+    return () => {
+      clearTimeout(toastVisibilityTimeout.current);
+      clearInterval(toastVisibilityTimeout.current);
     }
   }, [cartStore.showCoffeToast])
 
@@ -125,12 +132,6 @@ export function Home() {
     }
   })
 
-  // TODO dar uma olhada pq essa animação aq tá bugando
-  // TODO se pá se eu usar a parada de gesto aq isso resolve, ai habilito o scroll dps de uma certa hr da tela
-  // TODO basicamente boyo o identificador de gestos aq, e "puxo" ele até la emcima, a aprtir de uma posição definida eu "travo" o usuário, e habilito o scroll
-
-  // TODO trocar os touchableOpacity
-  // TODO arrumar animação de quando vc clica no filtro ele fica piscando
   const coffeListScrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       if (!canScroll) return;
@@ -292,8 +293,6 @@ export function Home() {
           </Animated.View>
         </Animated.View>
       </View >
-      {/* TODO ver se essa animação ta nice */}
-      {/* TODO, ver melhor a lógica em cima disso, pq ele só vai aparecer isso qunado eu adicionar um café, clicar no carrinho, e dai selecionar outro cafpe */}
       {
         cartStore.showCoffeToast && (
           <CoffeAddedToast

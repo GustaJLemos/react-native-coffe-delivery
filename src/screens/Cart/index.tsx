@@ -38,11 +38,6 @@ export function Cart() {
     cartStore.deleteCoffeAddedById(id, size);
   }
 
-  // TODO melhorar essa lógica aq, pra gente conseguir de outra forma mostrar o toast
-  useEffect(() => {
-    cartStore.setShowCoffeToast(false);
-  }, [])
-
   return (
     <View style={styles.container}>
       <Header
